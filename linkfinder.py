@@ -120,7 +120,7 @@ html = "<style>.text {font-size:16px;margin:5px;font-family: Helvetica;color: #3
 
 for file in files:
     endpoints = parser_file(file)
-    html += "<h1>%s</h1>" % file
+    html += "<h1>%s</h1>" % cgi.escape(file)
 
     for endpoint in endpoints:
         string = "<div><p class='text'>%s" % cgi.escape(endpoint[1])
