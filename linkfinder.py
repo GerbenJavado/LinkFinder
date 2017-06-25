@@ -127,9 +127,12 @@ for file in files:
         string2 = "</p><div class='container'>%s</div></div>" % cgi.escape(endpoint[0])
         string2 = string2.replace(cgi.escape(endpoint[1]), "<span style='background-color:yellow'>%s</span>" % cgi.escape(endpoint[1]))
         html += string + string2
-    
-text_file = open(args.output, "w")
-text_file.write(html)
-text_file.close()
+try:    
+    text_file = open(args.output, "w")
+    text_file.write(html.encode('utf-8'))
+    text_file.close()
+    print("URL to access output: file:///%s" % os.path.abspath(args.output))
+except:
+    print("Output can't be saved in %s due to exception: %s" % (args.output, sys.exc_info()[0]))
 
-print("URL to access output: file:///%s" % os.path.abspath(args.output))
+
