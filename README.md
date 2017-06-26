@@ -49,4 +49,4 @@ Short Form    | Long Form     | Description
 - Due to the way python handles string concatenation the beautifying of the JavaScript can take ages.
 - This is the first time I publicly release a tool. Yes, I do suck at coding, but contributions are much appreciated!
 - LinkFinder is published under the [MIT License](https://github.com/GerbenJavado/LinkFinder/blob/master/LICENSE).
-- Thanks to [@jackhcable](https://twitter.com/jackhcable) for providing me with feedback.
+- Thanks to [@jackhcable](https://twitter.com/jackhcable) for providing me with feedback and [@edoverflow](https://twitter.com/edoverflow) for making the code and layout prettier.
