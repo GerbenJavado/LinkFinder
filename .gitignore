@@ -97,3 +97,8 @@ ENV/
 
 # mkdocs documentation
 /site
+
+### Other ###
+
+# Generated HTML files
+*.html
