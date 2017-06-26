@@ -112,8 +112,8 @@ def send_request(url):
 def parser_file(url):
     try:
         content = send_request(url)
-    except:
-        parser_error('invalid input defined or SSL error.')
+    except Exception as e:
+        parser_error("invalid input defined or SSL error: %s" % e)
 
     # Beautify
     content = jsbeautifier.beautify(content)
@@ -161,8 +161,11 @@ for file in files:
         )
         html += string + string2
 
-text_file = open(args.output, "w")
-text_file.write(html)
-text_file.close()
+try:    
+    text_file = open(args.output, "wb")
+    text_file.write(html.encode('utf-8'))
+    text_file.close()
+    print("URL to access output: file:///%s" % os.path.abspath(args.output))
+except Exception as e:
+    print("Output can't be saved in %s due to exception: %s" % (args.output, e))
 
-print("URL to access output: file:///%s" % os.path.abspath(args.output))
