@@ -151,8 +151,9 @@ color:#323232;margin-bottom:15px;}</style>
 
 for file in files:
     endpoints = parser_file(file)
-    html += '<h1>File: <a href="%s">%s</a></h1>' % (cgi.escape(file),
-                                                    cgi.escape(file))
+    html += '''
+    <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
+    ''' % (cgi.escape(file), cgi.escape(file))
 
     for endpoint in endpoints:
         string = "<div><a href='%s' class='text'>%s" % (
