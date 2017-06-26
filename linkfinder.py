@@ -139,8 +139,11 @@ def parser_file(url):
 files = parser_input(args.input)
 
 html = """
-<style>.text {font-size:16px;margin:5px;font-family:Helvetica sans-serif;color:#323232;background-color:white;!important}\
-.container {background-color:#e9e9e9;padding:5px;\
+<style>h1{font-family:sans-serif;}\
+a{color:#000;}\
+.text{font-size:16px;font-family:Helvetica, sans-serif;color:#323232;\
+background-color:white;!important;}\
+.container{background-color:#e9e9e9;padding:10px;margin:10px 0;\
 font-family:helvetica;font-size:13px;border-width: 1px;\
 border-style:solid;border-color:#8a8a8a;\
 color:#323232;margin-bottom:15px;}</style>
@@ -148,11 +151,15 @@ color:#323232;margin-bottom:15px;}</style>
 
 for file in files:
     endpoints = parser_file(file)
-    html += "<h1>%s</h1>" % cgi.escape(file)
+    html += '<h1>File: <a href="%s">%s</a></h1>' % (cgi.escape(file),
+                                                    cgi.escape(file))
 
     for endpoint in endpoints:
-        string = "<div><p class='text'>%s" % cgi.escape(endpoint[1])
-        string2 = "</p><div class='container'>%s</div></div>" % cgi.escape(
+        string = "<div><a href='%s' class='text'>%s" % (
+            cgi.escape(endpoint[1]),
+            cgi.escape(endpoint[1])
+        )
+        string2 = "</a><div class='container'>%s</div></div>" % cgi.escape(
             endpoint[0]
         )
         string2 = string2.replace(
@@ -162,11 +169,11 @@ for file in files:
         )
         html += string + string2
 
-try:    
+try:
     text_file = open(args.output, "wb")
     text_file.write(html.encode('utf-8'))
     text_file.close()
     print("URL to access output: file:///%s" % os.path.abspath(args.output))
 except Exception as e:
-    print("Output can't be saved in %s due to exception: %s" % (args.output, e))
-
+    print("Output can't be saved in %s due to exception: %s" % (args.output,
+                                                                e))
