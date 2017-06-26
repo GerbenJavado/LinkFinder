@@ -138,12 +138,13 @@ def parser_file(url):
 # Program
 files = parser_input(args.input)
 
-html = "<style>.text {font-size:16px;margin:5px;font-family: Helvetica;\
-        color: #323232;background-color:white;!important}\
-        .container {background-color: #e9e9e9;padding:5px;\
-        font-family: helvetica;font-size: 13px;border-width: 1px;\
-        border-style: solid;border-color: #8a8a8a;\
-        color: #323232;margin-bottom: 15px;}</style>"
+html = """
+<style>.text {font-size:16px;margin:5px;font-family: Helvetica;color: #323232;background-color:white;!important}\
+.container {background-color: #e9e9e9;padding:5px;\
+font-family: helvetica;font-size: 13px;border-width: 1px;\
+border-style: solid;border-color: #8a8a8a;\
+color: #323232;margin-bottom: 15px;}</style>
+"""
 
 for file in files:
     endpoints = parser_file(file)
