@@ -13,9 +13,13 @@ The output is given in HTML.
 
 
 ## Installation
-Clone LinkFinder using git as seen belows or download linkfinder.py manually. LinkFinder supports **Python 2 & 3**.
+
+LinkFinder supports **Python 2 & 3**.
+
 ```
-git clone https://github.com/GerbenJavado/LinkFinder.git
+$ git clone https://github.com/GerbenJavado/LinkFinder.git
+$ cd LinkFinder
+$ python setup.py install
 ```
 
 ## Dependencies:
