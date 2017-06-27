@@ -206,7 +206,7 @@ try:
     text_file.write(github_issues.encode('utf-8'))
     text_file.close()
     print("URL to access output: file:///%s" % os.path.abspath(args.output))
-    if os.name !== 'nt': os.system("export BROWSER=open")
+    if os.name != 'nt': os.system("export BROWSER=open")
     webbrowser.open("file://" + os.path.abspath(args.output))
 except Exception as e:
     print("Output can't be saved in %s due to exception: %s" % (args.output,
