@@ -14,6 +14,7 @@ import requests
 from requests_file import FileAdapter
 import jsbeautifier
 import webbrowser
+from string import Template
 
 # Regex used
 regex = re.compile(r"""
@@ -139,30 +140,10 @@ def parser_file(url):
 # Program
 files = parser_input(args.input)
 
-html = """
-<style>h1{font-family:sans-serif;}\
-a{color:#000;}\
-.text{font-size:16px;font-family:Helvetica, sans-serif;color:#323232;\
-background-color:white;}\
-.container{background-color:#e9e9e9;padding:10px;margin:10px 0;\
-font-family:helvetica;font-size:13px;border-width: 1px;\
-border-style:solid;border-color:#8a8a8a;\
-color:#323232;margin-bottom:15px;}\
-.button{padding:17px 60px;margin:10px 10px 10px 0;\
-display:inline-block;background-color:#f4f4f4;\
-border-radius:.25rem;text-decoration:none;\
--webkit-transition:.15s ease-in-out;\
-transition:.15s ease-in-out;color:#333;\
-position:relative;}\
-.button:hover{background-color:#eee;\
-text-decoration:none;}\
-.github-icon{line-height:0;position:absolute;\
-top:14px;left:24px;opacity:0.7;}</style>
-"""
-
+# Output
 for file in files:
     endpoints = parser_file(file)
-    html += '''
+    html = '''
     <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
     ''' % (cgi.escape(file), cgi.escape(file))
 
@@ -179,38 +160,18 @@ for file in files:
             "<span style='background-color:yellow'>%s</span>" %
             cgi.escape(endpoint[1])
         )
-        # TODO: Add HTML template.
-        '''
-        github_issues = """
-        <a class='button' href='https://github.com/GerbenJavado/LinkFinder/issues/new'
-        target='_blank' rel='nofollow noopener noreferrer'>
-            <span class='github-icon'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                viewBox="0 0 24 24">
-                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 
-                    0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 
-                    0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 
-                    2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 
-                    5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 
-                    6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" fill="none" 
-                    stroke="#000" stroke-linecap="round" stroke-linejoin="round" 
-                    stroke-width="2"/>
-                </svg>
-            </span>
-            Report an issue.
-        </a>
-        """
-        '''
+        
         html += string + string2
+        s = Template(open('%s/template.html' % os.path.dirname(sys.argv[0]), 'r').read())
 
 try:
     text_file = open(args.output, "wb")
-    text_file.write(html.encode('utf-8'))
-    # text_file.write(github_issues.encode('utf-8'))
+    text_file.write(s.substitute(content=html).encode('utf-8'))
     text_file.close()
+
     print("URL to access output: file:///%s" % os.path.abspath(args.output))
     if os.name != 'nt': os.system("export BROWSER=open")
-    webbrowser.open("file://" + os.path.abspath(args.output))
+    webbrowser.open("file://%s" % os.path.abspath(args.output))
 except Exception as e:
     print("Output can't be saved in %s due to exception: %s" % (args.output,
                                                                 e))
