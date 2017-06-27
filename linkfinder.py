@@ -3,6 +3,10 @@
 # LinkFinder
 # By Gerben_Javado
 
+# Fix webbrowser bug for MacOS
+import os
+os.environ["BROWSER"] = "open"
+
 # Import libraries
 import re
 import sys
@@ -170,7 +174,6 @@ try:
     text_file.close()
 
     print("URL to access output: file:///%s" % os.path.abspath(args.output))
-    if os.name != 'nt': os.system("export BROWSER=open")
     webbrowser.open("file://%s" % os.path.abspath(args.output))
 except Exception as e:
     print("Output can't be saved in %s due to exception: %s" % (args.output,
