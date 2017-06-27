@@ -13,6 +13,7 @@ import argparse
 import requests
 from requests_file import FileAdapter
 import jsbeautifier
+import webbrowser
 
 # Regex used
 regex = re.compile(r"""
@@ -205,6 +206,7 @@ try:
     text_file.write(github_issues.encode('utf-8'))
     text_file.close()
     print("URL to access output: file:///%s" % os.path.abspath(args.output))
+    webbrowser.open(os.path.abspath(args.output))
 except Exception as e:
     print("Output can't be saved in %s due to exception: %s" % (args.output,
                                                                 e))
