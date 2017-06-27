@@ -10,7 +10,6 @@ os.environ["BROWSER"] = "open"
 # Import libraries
 import re
 import sys
-import os
 import glob
 import cgi
 import argparse
