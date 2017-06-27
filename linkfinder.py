@@ -179,6 +179,8 @@ for file in files:
             "<span style='background-color:yellow'>%s</span>" %
             cgi.escape(endpoint[1])
         )
+        # TODO: Add HTML template.
+        '''
         github_issues = """
         <a class='button' href='https://github.com/GerbenJavado/LinkFinder/issues/new'
         target='_blank' rel='nofollow noopener noreferrer'>
@@ -198,12 +200,13 @@ for file in files:
             Report an issue.
         </a>
         """
+        '''
         html += string + string2
 
 try:
     text_file = open(args.output, "wb")
     text_file.write(html.encode('utf-8'))
-    text_file.write(github_issues.encode('utf-8'))
+    # text_file.write(github_issues.encode('utf-8'))
     text_file.close()
     print("URL to access output: file:///%s" % os.path.abspath(args.output))
     if os.name != 'nt': os.system("export BROWSER=open")
