@@ -162,7 +162,7 @@ for file in files:
         )
         
         html += string + string2
-        s = Template(open('%s/template.html' % os.path.dirname(sys.argv[0]), 'r').read())
+        s = Template(open('%s/LinkFinder/template.html' % os.path.dirname(sys.path[0]), 'r').read())
 
 try:
     text_file = open(args.output, "wb")
