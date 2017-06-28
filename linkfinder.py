@@ -167,13 +167,13 @@ for file in files:
         html += string + string2
 
 try:
-    s = Template(open('%s/LinkFinder/template.html' % os.path.dirname(sys.path[0]), 'r').read())
+    s = Template(open('%s/template.html' % sys.path[0], 'r').read())
     
     text_file = open(args.output, "wb")
     text_file.write(s.substitute(content=html).encode('utf-8'))
     text_file.close()
 
-    print("URL to access output: file:///%s" % os.path.abspath(args.output))
+    print("URL to access output: file://%s" % os.path.abspath(args.output))
     webbrowser.open("file://%s" % os.path.abspath(args.output))
 except Exception as e:
     print("Output can't be saved in %s due to exception: %s" % (args.output,
