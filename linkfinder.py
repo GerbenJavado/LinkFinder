@@ -165,9 +165,10 @@ for file in files:
         )
         
         html += string + string2
-        s = Template(open('%s/LinkFinder/template.html' % os.path.dirname(sys.path[0]), 'r').read())
 
 try:
+    s = Template(open('%s/LinkFinder/template.html' % os.path.dirname(sys.path[0]), 'r').read())
+    
     text_file = open(args.output, "wb")
     text_file.write(s.substitute(content=html).encode('utf-8'))
     text_file.close()
