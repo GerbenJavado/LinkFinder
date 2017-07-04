@@ -91,7 +91,8 @@ def parser_input(input):
         return (paths if len(paths) > 0 else parser_error('Input with wildcard does \
         not match any files.'))
     else:
-        return ["file:///%s" % os.path.abspath(input)]
+        path = "file:///%s" % os.path.abspath(input)
+        return [path if os.path.exists(path) else parser_error("file could not be found.")]
 
 # Send request using Requests
 
