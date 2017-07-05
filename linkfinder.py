@@ -88,15 +88,15 @@ def parser_input(input):
     if input.startswith('view-source:'):
         return [input[12:]]
 
-    elif "*" in input:
+    if "*" in input:
         paths = glob.glob(os.path.abspath(input))
         for index, path in enumerate(paths):
             paths[index] = "file://%s" % path
         return (paths if len(paths) > 0 else parser_error('Input with wildcard does \
         not match any files.'))
-    else:
-        path = "file:///%s" % os.path.abspath(input)
-        return [path if os.path.exists(path) else parser_error("file could not be found.")]
+      
+    path = "file:///%s" % os.path.abspath(input)
+    return [path if os.path.exists(path) else parser_error("file could not be found.")]
 
 # Send request using Requests
 
