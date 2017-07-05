@@ -84,6 +84,10 @@ def parser_input(input):
     if input.startswith(('http://', 'https://',
                          'file://', 'ftp://', 'ftps://')):
         return [input]
+
+    if input.startswith('view-source:'):
+        return [input[12:]]
+
     elif "*" in input:
         paths = glob.glob(os.path.abspath(input))
         for index, path in enumerate(paths):
@@ -126,7 +130,8 @@ def parser_file(url):
 
     # Match Regex + Delete duplicates
     items = re.findall(regex, content)
-    #items = sorted(set(items))
+
+    # items = sorted(set(items))
     filtered_items = []
 
     for item in items:
