@@ -38,12 +38,12 @@ regex = re.compile(r"""
     |
 
     ([a-zA-Z0-9/]{1,}/              # Relative endpoint with /
-    [a-zA-Z0-9/]{1,}\.[a-z]{1,4}    # Rest + extension
+    [a-zA-Z0-9_\-/]{1,}\.[a-z]{1,4}    # Rest + extension
     (?:[\?|/][^"|']{0,}|))          # ? mark with parameters
 
     |
 
-    ([a-zA-Z0-9]{1,}                # filename
+    ([a-zA-Z0-9_\-]{1,}                # filename
     \.(?:php|asp|aspx|jsp)          # . + extension
     (?:\?[^"|']{0,}|))              # ? mark with parameters
  
