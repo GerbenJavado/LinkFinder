@@ -14,6 +14,7 @@ import glob
 import cgi
 import argparse
 import requests
+import urllib
 from requests_file import FileAdapter
 import jsbeautifier
 import webbrowser
@@ -157,9 +158,10 @@ for file in files:
     ''' % (cgi.escape(file), cgi.escape(file))
 
     for endpoint in endpoints:
+        url = cgi.escape(endpoint[1])
         string = "<div><a href='%s' class='text'>%s" % (
-            cgi.escape(endpoint[1]),
-            cgi.escape(endpoint[1])
+            urllib.unquote(url).decode('utf8'),
+            urllib.unquote(url).decode('utf8')
         )
         string2 = "</a><div class='container'>%s</div></div>" % cgi.escape(
             endpoint[0]
