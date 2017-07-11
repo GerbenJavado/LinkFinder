@@ -18,7 +18,9 @@ import urllib
 from requests_file import FileAdapter
 import jsbeautifier
 import webbrowser
+import subprocess
 from string import Template
+from requests.packages.urllib3.exceptions import InsecureRequestWarning 
 
 # Regex used
 regex = re.compile(r"""
@@ -95,9 +97,10 @@ def parser_input(input):
             paths[index] = "file://%s" % path
         return (paths if len(paths) > 0 else parser_error('Input with wildcard does \
         not match any files.'))
-      
+
     path = "file://%s" % os.path.abspath(input)
-    return [path if os.path.exists(input) else parser_error("file could not be found.")]
+    return [path if os.path.exists(input) else parser_error("file could not \
+        be found.")]
 
 # Send request using Requests
 
@@ -112,9 +115,10 @@ def send_request(url):
         'Accept-Encoding': 'gzip',
     }
 
+    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     s = requests.Session()
     s.mount('file://', FileAdapter())
-    content = s.get(url, headers=headers, timeout=1, stream=True)
+    content = s.get(url, headers=headers, timeout=1, stream=True, verify=False)
     return content.text if hasattr(content, "text") else content.content
 
 # Parse url
@@ -127,12 +131,15 @@ def parser_file(url):
         parser_error("invalid input defined or SSL error: %s" % e)
 
     # Beautify
-    content = jsbeautifier.beautify(content)
-
-    # Match Regex + Delete duplicates
-    items = re.findall(regex, content)
-
-    # items = sorted(set(items))
+    if args.output != 'cli':
+        content = jsbeautifier.beautify(content)
+        items = re.findall(regex, content)
+    else:
+        items = re.findall(regex, content)
+        items = sorted(set(items))
+        
+    # Match Regex
+        
     filtered_items = []
 
     for item in items:
@@ -151,6 +158,16 @@ def parser_file(url):
 files = parser_input(args.input)
 
 # Output
+
+
+def cli_output():
+    for file in files:
+        endpoints = parser_file(file)
+        for endpoint in endpoints:
+            print(urllib.unquote(cgi.escape(endpoint[1])).encode(
+                'ascii', 'ignore').decode('utf8'))
+
+
 for file in files:
     endpoints = parser_file(file)
     html = '''
@@ -171,18 +188,30 @@ for file in files:
             "<span style='background-color:yellow'>%s</span>" %
             cgi.escape(endpoint[1])
         )
-        
+
         html += string + string2
 
-try:
-    s = Template(open('%s/template.html' % sys.path[0], 'r').read())
-    
-    text_file = open(args.output, "wb")
-    text_file.write(s.substitute(content=html).encode('utf-8'))
-    text_file.close()
+if args.output != 'cli':
+    hide = os.dup(1)
+    os.close(1)
+    os.open(os.devnull, os.O_RDWR)
+    try:
+        s = Template(open('%s/template.html' % sys.path[0], 'r').read())
 
-    print("URL to access output: file://%s" % os.path.abspath(args.output))
-    webbrowser.open("file://%s" % os.path.abspath(args.output))
-except Exception as e:
-    print("Output can't be saved in %s due to exception: %s" % (args.output,
-                                                                e))
+        text_file = open(args.output, "wb")
+        text_file.write(s.substitute(content=html).encode('utf-8'))
+        text_file.close()
+
+        print("URL to access output: file://%s" % os.path.abspath(args.output))
+        file = "file://%s" % os.path.abspath(args.output)
+        if sys.platform == 'linux' or sys.platform == 'linux2':
+            subprocess.call(["xdg-open", file])
+        else:
+            webbrowser.open(file)
+    except Exception as e:
+        print("Output can't be saved in %s \
+            due to exception: %s" % (args.output, e))
+    finally:
+        os.dup2(hide, 1)
+else:
+    cli_output()
