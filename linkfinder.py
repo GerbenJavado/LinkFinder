@@ -129,7 +129,8 @@ def parser_file(url):
         parser_error("invalid input defined or SSL error: %s" % e)
 
     # Beautify
-    content = jsbeautifier.beautify(content)
+    if args.output != 'cli':
+        content = jsbeautifier.beautify(content)
 
     # Match Regex + Delete duplicates
     items = re.findall(regex, content)
@@ -186,7 +187,7 @@ for file in files:
 
         html += string + string2
 
-if ('-o' in sys.argv) or ('--output' in sys.argv):
+if args.output != 'cli':
     hide = os.dup(1)
     os.close(1)
     os.open(os.devnull, os.O_RDWR)
