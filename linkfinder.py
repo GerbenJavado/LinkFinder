@@ -131,11 +131,13 @@ def parser_file(url):
     # Beautify
     if args.output != 'cli':
         content = jsbeautifier.beautify(content)
-
+    else:
+        items = sorted(set(items))
+        
     # Match Regex + Delete duplicates
     items = re.findall(regex, content)
 
-    # items = sorted(set(items))
+    
     filtered_items = []
 
     for item in items:
