@@ -20,6 +20,7 @@ import jsbeautifier
 import webbrowser
 import subprocess
 from string import Template
+from requests.packages.urllib3.exceptions import InsecureRequestWarning 
 
 # Regex used
 regex = re.compile(r"""
@@ -114,9 +115,10 @@ def send_request(url):
         'Accept-Encoding': 'gzip',
     }
 
+    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     s = requests.Session()
     s.mount('file://', FileAdapter())
-    content = s.get(url, headers=headers, timeout=1, stream=True)
+    content = s.get(url, headers=headers, timeout=1, stream=True, verify=False)
     return content.text if hasattr(content, "text") else content.content
 
 # Parse url
@@ -134,8 +136,10 @@ def parser_file(url):
         items = re.findall(regex, content)
     else:
         items = re.findall(regex, content)
-        items = sorted(set(items))  
-    
+        items = sorted(set(items))
+        
+    # Match Regex
+        
     filtered_items = []
 
     for item in items:
