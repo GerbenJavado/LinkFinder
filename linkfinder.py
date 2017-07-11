@@ -18,6 +18,7 @@ import urllib
 from requests_file import FileAdapter
 import jsbeautifier
 import webbrowser
+import subprocess
 from string import Template
 
 # Regex used
@@ -151,6 +152,13 @@ def parser_file(url):
 files = parser_input(args.input)
 
 # Output
+def cli_output():
+    for file in files:
+        endpoints = parser_file(file)
+        for endpoint in endpoints:
+            print(urllib.unquote(cgi.escape(endpoint[1])).encode('ascii', 'ignore').decode('utf8'))
+
+
 for file in files:
     endpoints = parser_file(file)
     html = '''
@@ -174,15 +182,28 @@ for file in files:
         
         html += string + string2
 
-try:
-    s = Template(open('%s/template.html' % sys.path[0], 'r').read())
-    
-    text_file = open(args.output, "wb")
-    text_file.write(s.substitute(content=html).encode('utf-8'))
-    text_file.close()
+if ('-o' in sys.argv) or ('--output' in sys.argv):
+    hide = os.dup(1)
+    os.close(1)
+    os.open(os.devnull, os.O_RDWR)
+    try:
+        s = Template(open('%s/template.html' % sys.path[0], 'r').read())
+        
+        text_file = open(args.output, "wb")
+        text_file.write(s.substitute(content=html).encode('utf-8'))
+        text_file.close()
 
-    print("URL to access output: file://%s" % os.path.abspath(args.output))
-    webbrowser.open("file://%s" % os.path.abspath(args.output))
-except Exception as e:
-    print("Output can't be saved in %s due to exception: %s" % (args.output,
-                                                                e))
+        print("URL to access output: file://%s" % os.path.abspath(args.output))
+        file = "file://%s" % os.path.abspath(args.output)
+        if sys.platform == 'linux' or sys.platform == 'linux2':
+            subprocess.call(["xdg-open", file])
+        else:
+            webbrowser.open(file)
+    except Exception as e:
+        print("Output can't be saved in %s due to exception: %s" % (args.output,
+                                                                    e))
+    finally:
+        os.dup2(hide, 1)
+else:
+    cli_output()
+
