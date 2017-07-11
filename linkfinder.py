@@ -96,9 +96,10 @@ def parser_input(input):
             paths[index] = "file://%s" % path
         return (paths if len(paths) > 0 else parser_error('Input with wildcard does \
         not match any files.'))
-      
+
     path = "file://%s" % os.path.abspath(input)
-    return [path if os.path.exists(input) else parser_error("file could not be found.")]
+    return [path if os.path.exists(input) else parser_error("file could not \
+        be found.")]
 
 # Send request using Requests
 
@@ -152,11 +153,14 @@ def parser_file(url):
 files = parser_input(args.input)
 
 # Output
+
+
 def cli_output():
     for file in files:
         endpoints = parser_file(file)
         for endpoint in endpoints:
-            print(urllib.unquote(cgi.escape(endpoint[1])).encode('ascii', 'ignore').decode('utf8'))
+            print(urllib.unquote(cgi.escape(endpoint[1])).encode(
+                'ascii', 'ignore').decode('utf8'))
 
 
 for file in files:
@@ -179,7 +183,7 @@ for file in files:
             "<span style='background-color:yellow'>%s</span>" %
             cgi.escape(endpoint[1])
         )
-        
+
         html += string + string2
 
 if ('-o' in sys.argv) or ('--output' in sys.argv):
@@ -188,7 +192,7 @@ if ('-o' in sys.argv) or ('--output' in sys.argv):
     os.open(os.devnull, os.O_RDWR)
     try:
         s = Template(open('%s/template.html' % sys.path[0], 'r').read())
-        
+
         text_file = open(args.output, "wb")
         text_file.write(s.substitute(content=html).encode('utf-8'))
         text_file.close()
@@ -200,10 +204,9 @@ if ('-o' in sys.argv) or ('--output' in sys.argv):
         else:
             webbrowser.open(file)
     except Exception as e:
-        print("Output can't be saved in %s due to exception: %s" % (args.output,
-                                                                    e))
+        print("Output can't be saved in %s \
+            due to exception: %s" % (args.output, e))
     finally:
         os.dup2(hide, 1)
 else:
     cli_output()
-
