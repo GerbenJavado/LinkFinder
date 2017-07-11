@@ -134,9 +134,8 @@ def parser_file(url):
     else:
         items = sorted(set(items))
         
-    # Match Regex + Delete duplicates
+    # Match Regex
     items = re.findall(regex, content)
-
     
     filtered_items = []
 
