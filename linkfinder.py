@@ -72,18 +72,20 @@ parser.add_argument("-r", "--regex",
                     action="store")
 args = parser.parse_args()
 
-# Error messages
-
 
 def parser_error(errmsg):
+    '''
+    Error Messages
+    '''
     print("Usage: python %s [Options] use -h for help" % sys.argv[0])
     print("Error: %s" % errmsg)
     sys.exit()
 
-# Parse input
-
 
 def parser_input(input):
+    '''
+    Parse Input
+    '''
     if input.startswith(('http://', 'https://',
                          'file://', 'ftp://', 'ftps://')):
         return [input]
@@ -102,10 +104,11 @@ def parser_input(input):
     return [path if os.path.exists(input) else parser_error("file could not \
         be found.")]
 
-# Send request using Requests
-
 
 def send_request(url):
+    '''
+    Send requests with Requests
+    '''
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
         AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
@@ -121,10 +124,11 @@ def send_request(url):
     content = s.get(url, headers=headers, timeout=1, stream=True, verify=False)
     return content.text if hasattr(content, "text") else content.content
 
-# Parse url
-
 
 def parser_file(url):
+    '''
+    Parse Input
+    '''
     try:
         content = send_request(url)
     except Exception as e:
@@ -139,7 +143,6 @@ def parser_file(url):
         items = sorted(set(items))
         
     # Match Regex
-        
     filtered_items = []
 
     for item in items:
@@ -157,17 +160,18 @@ def parser_file(url):
 # Program
 files = parser_input(args.input)
 
-# Output
-
 
 def cli_output():
+    '''
+    Output to CLI
+    '''
     for file in files:
         endpoints = parser_file(file)
         for endpoint in endpoints:
             print(urllib.unquote(cgi.escape(endpoint[1])).encode(
                 'ascii', 'ignore').decode('utf8'))
 
-
+# Output to HTML file
 for file in files:
     endpoints = parser_file(file)
     html = '''
