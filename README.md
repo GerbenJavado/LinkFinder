@@ -31,7 +31,7 @@ LinkFinder depends on the `requests`, `argparse`, `jsbeautifier` and `requests-f
 Short Form    | Long Form     | Description
 ------------- | ------------- |-------------
 -i            | --input      | Input a: URL, file or folder. For folders a wildcard can be used (e.g. '/*.js').
--o            | --output  | Where to save the file, including file name. Default: output.html
+-o            | --output  | Where to save the file, including file name or output to CLI. Default: output.html
 -r            | --regex       | RegEx for filtering purposes against found endpoints (e.g. ^/api/)
 -h            | --help        | show the help message and exit
 
@@ -40,6 +40,10 @@ Short Form    | Long Form     | Description
 * Most basic usage to find endpoints in an online JavaScript file and output the results to results.html:
 
 ``python linkfinder.py -i https://example.com/1.js -o results.html``
+
+* CLI ouput:
+
+`python linkfinder.py -i https://example.com/1.js -o cli`
 
 * Enumerating an entire folder for JavaScript files, while looking for endpoints starting with /api/ and finally saving the results to results.html:
 
