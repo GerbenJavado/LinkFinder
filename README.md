@@ -30,9 +30,11 @@ LinkFinder depends on the `requests`, `argparse`, `jsbeautifier` and `requests-f
 
 Short Form    | Long Form     | Description
 ------------- | ------------- |-------------
--i            | --input      | Input a: URL, file or folder. For folders a wildcard can be used (e.g. '/*.js').
--o            | --output  | Where to save the file, including file name or output to CLI. Default: output.html
+-i            | --input       | Input a: URL, file or folder. For folders a wildcard can be used (e.g. '/*.js').
+-o            | --output      | Where to save the file, including file name or output to CLI. Default: output.html
 -r            | --regex       | RegEx for filtering purposes against found endpoints (e.g. ^/api/)
+-b            | --burp        | Toggle to use when inputting a Burp 'Save selected' file containing multiple JS files
+-c            | --cookies     | Add cookies to the request
 -h            | --help        | show the help message and exit
 
 ### Examples
@@ -44,6 +46,10 @@ Short Form    | Long Form     | Description
 * CLI ouput:
 
 `python linkfinder.py -i https://example.com/1.js -o cli`
+
+* Burp input
+
+`python linkfinder.py -i burpfile -b`
 
 * Enumerating an entire folder for JavaScript files, while looking for endpoints starting with /api/ and finally saving the results to results.html:
 
