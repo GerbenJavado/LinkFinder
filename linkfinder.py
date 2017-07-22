@@ -200,6 +200,7 @@ def html_save(html):
 urls = parser_input(args.input)  
 
 # Convert URLs to JS
+html = ''
 for url in urls:
     if not args.burp:
         try:
@@ -208,13 +209,16 @@ for url in urls:
             parser_error("invalid input defined or SSL error: %s" % e)
     else: 
         file = url
+        url = 'Burp file'
 
     endpoints = parser_file(file)
-    html = ''
 
     if args.output == 'cli':
         cli_output(endpoints)
     else:
+        html += '''
+            <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
+            ''' % (cgi.escape(url), cgi.escape(url))
 
         for endpoint in endpoints:
             url = cgi.escape(endpoint[1])
