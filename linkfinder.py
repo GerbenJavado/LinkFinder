@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Python 2.7.x - 3.6.x
 # LinkFinder
-# By Gerben_Javado
+# By Gerben_Javado & EdOverflow
 
 # Fix webbrowser bug for MacOS
 import os
