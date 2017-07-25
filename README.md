@@ -60,4 +60,4 @@ Short Form    | Long Form     | Description
 - This is the first time I publicly release a tool. Yes, I do suck at coding, but contributions are much appreciated!
 - LinkFinder is published under the [MIT License](https://github.com/GerbenJavado/LinkFinder/blob/master/LICENSE).
 - Thanks to [@jackhcable](https://twitter.com/jackhcable) for providing me with feedback.
-- Special thanks to [@edoverflow](https://twitter.com/edoverflow) for making this project a lot cleaner and awesome.
+- Special thanks to our CEO [@edoverflow](https://twitter.com/edoverflow) for making this project a lot cleaner and awesome.
