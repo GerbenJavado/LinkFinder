@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Python 2.7.x - 3.6.x
 # LinkFinder
-# By Gerben_Javado & EdOverflow
+# By Gerben_Javado
 
 # Fix webbrowser bug for MacOS
 import os
@@ -13,40 +13,6 @@ import re, sys, glob, cgi, argparse, requests, urllib, jsbeautifier, webbrowser,
 from requests_file import FileAdapter
 from string import Template
 from requests.packages.urllib3.exceptions import InsecureRequestWarning 
-
-# Regex used
-regex = re.compile(r"""
-
-  ([^\n]*(?:"|')                    # Start newline delimiter
-
-  (?:
-    ((?:[a-zA-Z]{1,10}://|//)       # Match a scheme [a-Z]*1-10 or //
-    [^"'/]{1,}\.                    # Match a domainname (any character + dot)
-    [a-zA-Z]{2,}[^"']{0,})          # The domainextension and/or path
-
-    |
-
-    ((?:/|\.\./|\./)                # Start with /,../,./
-    [^"'><,;| *()(%$^/\\\[\]]       # Next character can't be... 
-    [^"'><,;|()]{1,})               # Rest of the characters can't be
-
-    |
-
-    ([a-zA-Z0-9/]{1,}/              # Relative endpoint with /
-    [a-zA-Z0-9_\-/]{1,}\.[a-z]{1,4} # Rest + extension
-    (?:[\?|/][^"|']{0,}|))          # ? mark with parameters
-
-    |
-
-    ([a-zA-Z0-9_\-]{1,}             # filename
-    \.(?:php|asp|aspx|jsp)          # . + extension
-    (?:\?[^"|']{0,}|))              # ? mark with parameters
- 
-  )             
-  
-  (?:"|')[^\n]*)                    # End newline delimiter
-
-""", re.VERBOSE)
 
 # Parse command line
 parser = argparse.ArgumentParser()
@@ -70,6 +36,45 @@ parser.add_argument("-c", "--cookies",
                     action="store", default="")
 args = parser.parse_args()
 
+# Newlines in regex? Important for CLI output without jsbeautifier
+if args.output != 'cli':
+    addition = ("[^\n]*","[^\n]*")
+else:
+    addition = ("","")
+
+# Regex used
+regex = re.compile(r"""
+
+  (%s(?:"|')                    # Start newline delimiter
+
+  (?:
+    ((?:[a-zA-Z]{1,10}://|//)       # Match a scheme [a-Z]*1-10 or //
+    [^"'/]{1,}\.                    # Match a domainname (any character + dot)
+    [a-zA-Z]{2,}[^"']{0,})          # The domainextension and/or path
+
+    |
+
+    ((?:/|\.\./|\./)                # Start with /,../,./
+    [^"'><,;| *()(%%$^/\\\[\]]       # Next character can't be... 
+    [^"'><,;|()]{1,})               # Rest of the characters can't be
+
+    |
+
+    ([a-zA-Z0-9_\-/]{1,}/           # Relative endpoint with /
+    [a-zA-Z0-9_\-/]{1,}\.[a-z]{1,4} # Rest + extension
+    (?:[\?|/][^"|']{0,}|))          # ? mark with parameters
+
+    |
+
+    ([a-zA-Z0-9_\-]{1,}             # filename
+    \.(?:php|asp|aspx|jsp)          # . + extension
+    (?:\?[^"|']{0,}|))              # ? mark with parameters
+ 
+  )             
+  
+  (?:"|')%s)                    # End newline delimiter
+
+""" % addition, re.VERBOSE)
 
 def parser_error(errmsg):
     '''
@@ -144,8 +149,12 @@ def parser_file(content):
     '''
     
     # Beautify
-    content = jsbeautifier.beautify(content)
-    items = re.findall(regex, content)
+    if args.output != 'cli':
+        content = jsbeautifier.beautify(content)
+        items = re.findall(regex, content)
+    else:
+        items = re.findall(regex, content)
+        items = list(set(items))
         
     # Match Regex
     filtered_items = []
