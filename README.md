@@ -22,7 +22,7 @@ $ cd LinkFinder
 $ python setup.py install
 ```
 
-## Dependencies:
+## Dependencies
 
 LinkFinder depends on the `requests`, `argparse`, `jsbeautifier` and `requests-file` python modules. These dependencies can all be installed using [pip](https://pypi.python.org/pypi/pip). 
 
