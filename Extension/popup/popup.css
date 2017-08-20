@@ -1,0 +1,47 @@
+body { 
+	margin: 0;
+}
+#container{
+	height: 180px;
+	width: 250px;
+	margin: 0px;
+}
+h1 {
+	text-align: center;
+	margin: 0;
+	background-color: #dcdcdc;
+	color: #383636;
+	cursor: pointer;
+}
+.stripe{
+	background-color: #c1c1c1;
+	width: 100%;
+	height: 5px;
+}
+.margin {
+	background-color: #dcdcdc;
+	height: 5px;
+	width: 100%;
+}
+.margin-white {
+	height: 10px;
+	width: 100%;
+}
+#body{
+	margin-top: 5px;
+	margin-left: 5px;
+}
+input {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.button {
+    background-color: #dcdcdc;
+    margin-left: 10px;
+    color: #383636;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+    cursor: pointer;
+}

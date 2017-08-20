@@ -1,0 +1,38 @@
+table, th, td {
+   border: 1px solid black;
+   border-collapse: collapse;
+}
+table, th {
+  word-wrap: break-word;
+}
+#top {
+    text-align: center;
+    margin-bottom: 5px;
+}
+table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+button {
+    background-color: #dcdcdc;
+    color: #383636;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 11px;
+    cursor: pointer;
+}
+.search {
+    width: 99.5%;
+    margin-bottom: 10px;
+}
+
+#urls, #domains {
+    width: 100%;
+    margin-right: 0px;
+}
+
+.remove {
+    float: right;
+    margin-right: 7px;
+}
