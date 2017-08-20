@@ -4,7 +4,7 @@ This chrome extension feeds every JavaScript file loaded during browsing back to
 # Setup
 1. Clone this branch
 2. Load the chrome extension (Extension folder) into chrome (chrome://extensions/) while being in `Developer Mode`
-3. Edit the variable `linkfinder_path` in http-server.py to point to the directory where you installed LinkFinder.py
+3. Edit the variable `path_linkfinder` in http-server.py to point to the directory where you installed LinkFinder.py
 3. Run the Python script (`python http-server.py`), which will run a listener on port 8080
 4. Open `Inspect` in Chrome and browse to a page
 5. The found JavaScript files will appear in your terminal (http-server.py) and they will be run through LinkFinder
