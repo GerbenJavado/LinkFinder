@@ -11,3 +11,6 @@ This chrome extension feeds every JavaScript file loaded during browsing back to
 
 Optional:
 Clicking the extension icon in Chrome allows you to add domains to the whitelist. You can remove domains from the whitelist by clicking on the title (LinkFinder) in the extension.
+
+# Final Notes
+- This is still in development stage and there might be some bugs or imperfections. Feel free to submit an issue whenever you find one.
