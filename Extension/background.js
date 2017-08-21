@@ -7,8 +7,18 @@ function SendToServer(url){
 		for(x in storage.settings.whitelist){
 			if(urlDomain.indexOf(storage.settings.whitelist[x]) != -1){
 				try{xhr.send();}catch(e){};	
+			}else if(storage.settings.whitelist[x].split(/,[^*]*/).length >= 2 && storage.settings.whitelist[x].split(/,[^*]*/)[1] != ""){
+				if(domain.indexOf(storage.settings.whitelist[x].split(/,[^*]*/)[0]) >= 0){
+					try{xhr.send();}catch(e){};
+				}
+			}else if(storage.settings.whitelist[x].split(/,[^a-zA-Z]*/).length >= 2){
+				for(y in storage.settings.whitelist[x].split(/,[^a-zA-Z]*/)){
+					if(urlDomain.indexOf(storage.settings.whitelist[x].split(/,[^a-zA-Z]*/)[y]) >= 0){
+						console.log(urlDomain)
+					}
+				}
 			}
-		}
+		};
 	}
 };
 
@@ -44,9 +54,9 @@ function UpdateStorage(path, action, value){
 				storage.urls.splice(index, 1);
 			}
 		}else if(path == 'settings.whitelist'){
-			if(action == 'add' && value.length > 4 && callback.settings.whitelist.indexOf(value) == -1){
+			if(action == 'add' && value.length >= 1 && callback.settings.whitelist.indexOf(value) == -1){
 				storage.settings.whitelist.push(value)
-			}else if(action == 'remove' && value.length > 4 && callback.settings.whitelist.indexOf(value) >= 0){
+			}else if(action == 'remove' && value.length >= 1 && callback.settings.whitelist.indexOf(value) >= 0){
 				index = storage.settings.whitelist.indexOf(value);
 				storage.settings.whitelist.splice(index, 1);
 			}
