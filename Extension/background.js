@@ -14,7 +14,7 @@ function SendToServer(url){
 			}else if(storage.settings.whitelist[x].split(/,[^a-zA-Z]*/).length >= 2){
 				for(y in storage.settings.whitelist[x].split(/,[^a-zA-Z]*/)){
 					if(urlDomain.indexOf(storage.settings.whitelist[x].split(/,[^a-zA-Z]*/)[y]) >= 0){
-						console.log(urlDomain)
+						try{xhr.send();}catch(e){};
 					}
 				}
 			}
