@@ -26,7 +26,7 @@ while True:
     print(colorama.Fore.RED + url)
     output = os.popen('python -u %s/linkfinder.py -o cli -i %s' % (path_linkfinder, "'" + url.replace("'", "'\\''") + "'")).read()
     if "SSL error" in output:
-        output = os.popen('python -u linkfinder.py -o cli -i %s' % ('"' + url.replace("'", "'\\''").replace("https", "http") + '"')).read()
+        output = os.popen('python -u %s/linkfinder.py -o cli -i %s' % (path_linkfinder, '"' + url.replace("'", "'\\''").replace("https", "http") + '"')).read()
         print("\n" + colorama.Fore.YELLOW + "SSL error, using http..\n")
     print(output)
 
