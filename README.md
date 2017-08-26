@@ -47,7 +47,7 @@ Short Form    | Long Form     | Description
 
 `python linkfinder.py -i https://example.com/1.js -o cli`
 
-* Burp input
+* Burp input (select in target the files you want to save, right click `Save selected items`. Feed that file as input.
 
 `python linkfinder.py -i burpfile -b`
 
