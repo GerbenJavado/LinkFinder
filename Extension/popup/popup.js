@@ -52,5 +52,5 @@ document.getElementsByTagName('h1')[0].addEventListener('click', function(){
 })
 document.getElementById('done').addEventListener('click', function(){
 	list = document.getElementById('urllist').value.split(/,[^a-zA-Z]*/); document.getElementById('urllist').value == '';
-	for(x in list){xhr = new XMLHttpRequest; xhr.open("GET", "http://localhost:8080/?url="+encodeURIComponent(list[x])); xhr.send()};
+	for(x in list){xhr = new XMLHttpRequest; xhr.open("GET", "http://localhost:8089/?url="+encodeURIComponent(list[x])); xhr.send()};
 });
