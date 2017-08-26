@@ -4,7 +4,7 @@ colorama.init(autoreset=True)
 path_linkfinder = '/Applications/Pentesting/LinkFinder'
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('localhost', 8080)
+server_address = ('localhost', 8089)
 s.bind(server_address)
 s.listen(1)
 
