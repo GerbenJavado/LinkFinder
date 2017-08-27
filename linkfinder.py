@@ -105,7 +105,7 @@ def parser_input(input):
         items = xml.etree.ElementTree.fromstring(open(args.input, "r").read())
         
         for item in items:
-            jsfiles.append(base64.b64decode(item.find('response').text).decode('utf-8'))
+            jsfiles.append({"js":base64.b64decode(item.find('response').text).decode('utf-8'), "url":item.find('url').text})
         return jsfiles
 
     # Method 4 - Folder with a wildcard
@@ -217,8 +217,8 @@ for url in urls:
         except Exception as e:
             parser_error("invalid input defined or SSL error: %s" % e)
     else: 
-        file = url
-        url = 'Burp file'
+        file = url['js']
+        url = url['url']
 
     endpoints = parser_file(file)
 
