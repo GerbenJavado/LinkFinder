@@ -43,11 +43,11 @@ Short Form    | Long Form     | Description
 
 ``python linkfinder.py -i https://example.com/1.js -o results.html``
 
-* CLI ouput:
+* CLI ouput (doesn't use jsbeautifier, which makes it very fast):
 
 `python linkfinder.py -i https://example.com/1.js -o cli`
 
-* Burp input (select in target the files you want to save, right click, `Save selected items`, feed that file as input).
+* Burp input (select in target the files you want to save, right click, `Save selected items`, feed that file as input):
 
 `python linkfinder.py -i burpfile -b`
 
@@ -60,4 +60,4 @@ Short Form    | Long Form     | Description
 - This is the first time I publicly release a tool. Yes, I do suck at coding, but contributions are much appreciated!
 - LinkFinder is published under the [MIT License](https://github.com/GerbenJavado/LinkFinder/blob/master/LICENSE).
 - Thanks to [@jackhcable](https://twitter.com/jackhcable) for providing me with feedback.
-- Special thanks to our CEO [@edoverflow](https://twitter.com/edoverflow) for making this project a lot cleaner and awesome.
+- Special thanks [@edoverflow](https://twitter.com/edoverflow) for making this project a lot cleaner and awesome.
