@@ -5,7 +5,7 @@ LinkFinder is a python script written to discover endpoints and their parameters
 - Relative URLs with atleast one slash (text/test.php) 
 - Relative URLs without a slash (test.php)
 
-The output is given in HTML.
+The output is given in HTML. [Karel_origin](https://twitter.com/karel_origin) has written a chrome extension for LinkFinder which can be found [here](https://github.com/GerbenJavado/LinkFinder/tree/chrome_extension).
 
 ## Screenshots
 
