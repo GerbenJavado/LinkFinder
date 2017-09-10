@@ -13,7 +13,7 @@ if os.name != 'nt':
 
 else:
     path_linkfinder = ''
-    if path_linkfinder = '':
+    if path_linkfinder == '':
         warning = """
                     It looks like you are using Windows and haven't changed the 'path_linkfinder' variable.\n
                     Please check the installation guide on Github or use this tool on Linux/OS X to fix this automatically.
