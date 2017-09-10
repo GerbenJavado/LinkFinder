@@ -1,7 +1,24 @@
-import socket, re, urllib, os, colorama, sys
+import socket, re, urllib, os, colorama, platform, getpass, sys
 
 colorama.init(autoreset=True)
-path_linkfinder = '/Applications/Pentesting/LinkFinder'
+if os.name != 'nt':
+    if 'darwin' in platform.system().lower():
+        os_path = '/Users'
+    elif 'linux' in platform.system().lower():
+        os_path = '/home'
+
+    path_linkfinder = os.popen('''
+                find %s/%s -type f -name "linkfinder.py" -exec grep -il "Gerben_Javado" {} \; -print -quit | awk '{print $1; exit}'
+    ''' % (os_path, getpass.getuser())).read().replace('linkfinder.py','').rstrip()
+
+else:
+    path_linkfinder = ''
+    if path_linkfinder = '':
+        warning = """
+                    It looks like you are using Windows and haven't changed the 'path_linkfinder' variable.\n
+                    Please check the installation guide on Github or use this tool on Linux/OS X to fix this automatically.
+                """
+        print warning
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_address = ('localhost', 8080)
