@@ -4,7 +4,6 @@ LinkFinder is a python script written to discover endpoints and their parameters
 - Absolute URLs or dotted URLs (/\* or ../*)
 - Relative URLs with atleast one slash (text/test.php) 
 - Relative URLs without a slash (test.php)
-
 The output is given in HTML.
 
 ## Screenshots
