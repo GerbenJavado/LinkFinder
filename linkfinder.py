@@ -151,10 +151,9 @@ def parser_file(content):
     # Beautify
     if args.output != 'cli':
         content = jsbeautifier.beautify(content)
-        items = re.findall(regex, content)
-    else:
-        items = re.findall(regex, content)
-        items = list(set(items))
+    
+    items = re.findall(regex, content)
+    items = list(set(items))
         
     # Match Regex
     filtered_items = []
