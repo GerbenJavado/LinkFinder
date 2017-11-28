@@ -1,3 +1,4 @@
+#http-server.py by Gerben_Javado and Karel_Origin
 import socket, re, urllib, os, colorama, platform, getpass, sys
 
 colorama.init(autoreset=True)
