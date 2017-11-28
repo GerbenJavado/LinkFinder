@@ -119,7 +119,7 @@ def parser_input(input):
     # Method 5 - Local file
     path = "file://%s" % os.path.abspath(input)
     return [path if os.path.exists(input) else parser_error("file could not \
-        be found.")]
+be found (maybe you forgot to add http/https).")]
 
 
 def send_request(url):
