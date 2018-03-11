@@ -105,7 +105,7 @@ def parser_input(input):
         items = xml.etree.ElementTree.fromstring(open(args.input, "r").read())
         
         for item in items:
-            jsfiles.append({"js":base64.b64decode(item.find('response').text).decode('utf-8'), "url":item.find('url').text})
+            jsfiles.append({"js":base64.b64decode(item.find('response').text).decode('utf-8','replace'), "url":item.find('url').text})
         return jsfiles
 
     # Method 4 - Folder with a wildcard
