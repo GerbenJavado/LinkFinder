@@ -139,7 +139,7 @@ def send_request(url):
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     s = requests.Session()
     s.mount('file://', FileAdapter())
-    content = s.get(url, headers=headers, timeout=1, stream=True, verify=False)
+    content = s.get(url, headers=headers, timeout=2, stream=True, verify=False)
     return content.text if hasattr(content, "text") else content.content
 
 
