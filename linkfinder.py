@@ -8,11 +8,13 @@ import os
 os.environ["BROWSER"] = "open"
 
 # Import libraries
-import re, sys, glob, cgi, argparse, requests, urllib, jsbeautifier, webbrowser, subprocess, base64, xml.etree.ElementTree
+import re, sys, glob, cgi, argparse, jsbeautifier, webbrowser, subprocess, base64, xml.etree.ElementTree
+from string import Template 
 
-from requests_file import FileAdapter
-from string import Template
-from requests.packages.urllib3.exceptions import InsecureRequestWarning 
+try:
+    from urllib.request import Request, urlopen
+except ImportError:
+    from urllib2 import Request, urlopen
 
 # Parse command line
 parser = argparse.ArgumentParser()
@@ -45,34 +47,34 @@ else:
 # Regex used
 regex = re.compile(r"""
 
-  (%s(?:"|')                    # Start newline delimiter
+  (%s(?:"|')                            # Start newline delimiter
 
   (?:
-    ((?:[a-zA-Z]{1,10}://|//)       # Match a scheme [a-Z]*1-10 or //
-    [^"'/]{1,}\.                    # Match a domainname (any character + dot)
-    [a-zA-Z]{2,}[^"']{0,})          # The domainextension and/or path
+    ((?:[a-zA-Z]{1,10}://|//)           # Match a scheme [a-Z]*1-10 or //
+    [^"'/]{1,}\.                        # Match a domainname (any character + dot)
+    [a-zA-Z]{2,}[^"']{0,})              # The domainextension and/or path
 
     |
 
-    ((?:/|\.\./|\./)                # Start with /,../,./
-    [^"'><,;| *()(%%$^/\\\[\]]       # Next character can't be... 
-    [^"'><,;|()]{1,})               # Rest of the characters can't be
+    ((?:/|\.\./|\./)                    # Start with /,../,./
+    [^"'><,;| *()(%%$^/\\\[\]]          # Next character can't be... 
+    [^"'><,;|()]{1,})                   # Rest of the characters can't be
 
     |
 
-    ([a-zA-Z0-9_\-/]{1,}/           # Relative endpoint with /
-    [a-zA-Z0-9_\-/]{1,}\.[a-z]{1,4} # Rest + extension
-    (?:[\?|/][^"|']{0,}|))          # ? mark with parameters
+    ([a-zA-Z0-9_\-/]{1,}/               # Relative endpoint with /
+    [a-zA-Z0-9_\-/]{1,}\.[a-zA-Z]{1,4}  # Rest + extension
+    (?:[\?|/][^"|']{0,}|))              # ? mark with parameters
 
     |
 
-    ([a-zA-Z0-9_\-]{1,}             # filename
-    \.(?:php|asp|aspx|jsp)          # . + extension
-    (?:\?[^"|']{0,}|))              # ? mark with parameters
+    ([a-zA-Z0-9_\-]{1,}                 # filename
+    \.(?:php|asp|aspx|jsp|json)         # . + extension
+    (?:\?[^"|']{0,}|))                  # ? mark with parameters
  
   )             
   
-  (?:"|')%s)                    # End newline delimiter
+  (?:"|')%s)                            # End newline delimiter
 
 """ % addition, re.VERBOSE)
 
@@ -105,7 +107,7 @@ def parser_input(input):
         items = xml.etree.ElementTree.fromstring(open(args.input, "r").read())
         
         for item in items:
-            jsfiles.append({"js":base64.b64decode(item.find('response').text).decode('utf-8','replace'), "url":item.find('url').text})
+            jsfiles.append({"js":base64.b64decode(item.find('response').text).decode('utf-8',"replace"), "url":item.find('url').text})
         return jsfiles
 
     # Method 4 - Folder with a wildcard
@@ -126,22 +128,17 @@ def send_request(url):
     '''
     Send requests with Requests
     '''
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-        'Accept': 'text/html,\
-        application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.8',
-        'Accept-Encoding': 'gzip',
-        'Cookie': args.cookies
-    }
+    q = Request(url)
 
-    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-    s = requests.Session()
-    s.mount('file://', FileAdapter())
-    content = s.get(url, headers=headers, timeout=2, stream=True, verify=False)
-    return content.text if hasattr(content, "text") else content.content
+    q.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36')
+    q.add_header('Accept', 'text/html,\
+        application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8')
+    q.add_header('Accept-Language', 'en-US,en;q=0.8')
+    q.add_header('Accept-Encoding', '')
+    q.add_header('Cookie', args.cookies)
 
+    return urlopen(q).read().decode('utf-8', 'replace')
 
 def parser_file(content):
     '''
@@ -150,7 +147,10 @@ def parser_file(content):
     
     # Beautify
     if args.output != 'cli':
-        content = jsbeautifier.beautify(content)
+        if len(content) > 1000000:
+            content = content.replace(";","\r\n").replace(",","\r\n")
+        else:
+            content = jsbeautifier.beautify(content)
     
     items = re.findall(regex, content)
     items = list(set(items))
