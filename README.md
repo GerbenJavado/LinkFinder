@@ -24,7 +24,7 @@ $ python setup.py install
 
 ## Dependencies
 
-LinkFinder depends on the `requests`, `argparse`, `jsbeautifier` and `requests-file` python modules. These dependencies can all be installed using [pip](https://pypi.python.org/pypi/pip). 
+LinkFinder depends on the `argparse` and `jsbeautifier` python modules. These dependencies can all be installed using [pip](https://pypi.python.org/pypi/pip). 
 
 ## Usage
 
@@ -56,7 +56,6 @@ Short Form    | Long Form     | Description
 ``python linkfinder.py -i 'Desktop/*.js' -r ^/api/ -o results.html``
 
 ## Final remarks
-- Due to the way python handles string concatenation the beautifying of the JavaScript can take ages.
 - This is the first time I publicly release a tool. Contributions are much appreciated!
 - LinkFinder is published under the [MIT License](https://github.com/GerbenJavado/LinkFinder/blob/master/LICENSE).
 - Thanks to [@jackhcable](https://twitter.com/jackhcable) for providing me with feedback.
