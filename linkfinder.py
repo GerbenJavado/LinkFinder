@@ -8,7 +8,7 @@ import os
 os.environ["BROWSER"] = "open"
 
 # Import libraries
-import re, sys, glob, cgi, argparse, jsbeautifier, webbrowser, subprocess, base64, xml.etree.ElementTree
+import re, sys, glob, cgi, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree
 from string import Template 
 
 try:
@@ -129,6 +129,7 @@ def send_request(url):
     Send requests with Requests
     '''
     q = Request(url)
+    sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
 
     q.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
         AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36')
@@ -138,7 +139,7 @@ def send_request(url):
     q.add_header('Accept-Encoding', '')
     q.add_header('Cookie', args.cookies)
 
-    return urlopen(q).read().decode('utf-8', 'replace')
+    return urlopen(q, context=sslcontext).read().decode('utf-8', 'replace')
 
 def parser_file(content):
     '''
