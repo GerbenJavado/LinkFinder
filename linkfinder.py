@@ -149,7 +149,7 @@ def parser_file(content):
     # Beautify
     if args.output != 'cli':
         if len(content) > 1000000:
-            content = content.replace(";","\r\n").replace(",","\r\n")
+            content = content.replace(";",";\r\n").replace(",",",\r\n")
         else:
             content = jsbeautifier.beautify(content)
     
