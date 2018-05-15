@@ -41,6 +41,9 @@ parser.add_argument("-c", "--cookies",
                     action="store", default="")
 args = parser.parse_args()
 
+if args.input[-1:] == "/":
+    args.input = args.input[:-1]
+
 # Newlines in regex? Important for CLI output without jsbeautifier
 if args.output != 'cli':
     addition = ("[^\n]*","[^\n]*")
@@ -209,6 +212,23 @@ def html_save(html):
     finally:
         os.dup2(hide, 1)
 
+def check_url(url):
+    nopelist = ["node_modules", "jquery.js"]
+    if url[-3:] == ".js":
+        words = url.split("/")
+        for word in words:
+            if word in nopelist:
+                return False
+        if url[:2] == "//":
+            url = "https:" + url
+        if url[:4] != "http":
+            if url[:1] == "/":
+                url = args.input + url
+            else:
+                url = args.input + "/" + url
+        return url            
+    else:
+        return False
 # Convert input to URLs or JS files
 urls = parser_input(args.input)  
 
@@ -228,39 +248,39 @@ for url in urls:
     if args.domain:
         for endpoint in endpoints:
             endpoint = cgi.escape(endpoint[1]).encode('ascii', 'ignore').decode('utf8')
-            if endpoint[-3:] == ".js":
-                if endpoint[:2] == "//":
-                    endpoint = "https:" + endpoint
-                print("Running against: " + endpoint)
-                print("")
-                try:
-                    file = send_request(endpoint)
-                    new_endpoints = parser_file(file)
-                    if args.output == 'cli':
-                        cli_output(new_endpoints)
-                    else:
-                        html += '''
-                        <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
-                        ''' % (cgi.escape(url), cgi.escape(url))
+            endpoint = check_url(endpoint)
+            if endpoint is False:
+                continue
+            print("Running against: " + endpoint)
+            print("")
+            try:
+                file = send_request(endpoint)
+                new_endpoints = parser_file(file)
+                if args.output == 'cli':
+                    cli_output(new_endpoints)
+                else:
+                    html += '''
+                    <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
+                    ''' % (cgi.escape(url), cgi.escape(url))
 
-                        for endpoint2 in new_endpoints:
-                           url = cgi.escape(endpoint2[1])
-                           string = "<div><a href='%s' class='text'>%s" % (
-                              cgi.escape(url),
-                              cgi.escape(url)
-                           )
-                           string2 = "</a><div class='container'>%s</div></div>" % cgi.escape(
-                               endpoint2[0]
-                           )
-                           string2 = string2.replace(
-                               cgi.escape(endpoint2[1]),
-                               "<span style='background-color:yellow'>%s</span>" %
-                               cgi.escape(endpoint2[1])
-                           )
-                           html += string + string2
-                except Exception as e:
-                    parser_error("invalid input defined or SSL error: %s" % e)
-                print("")
+                    for endpoint2 in new_endpoints:
+                        url = cgi.escape(endpoint2[1])
+                        string = "<div><a href='%s' class='text'>%s" % (
+                            cgi.escape(url),
+                            cgi.escape(url)
+                        )
+                        string2 = "</a><div class='container'>%s</div></div>" % cgi.escape(
+                            endpoint2[0]
+                        )
+                        string2 = string2.replace(
+                            cgi.escape(endpoint2[1]),
+                            "<span style='background-color:yellow'>%s</span>" %
+                            cgi.escape(endpoint2[1])
+                        )
+                        html += string + string2
+            except Exception as e:
+                parser_error("invalid input defined or SSL error: %s" % e)
+            print("")
     print("")
     print("Running against: " + args.input)
     print("")
