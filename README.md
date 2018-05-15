@@ -33,6 +33,7 @@ Short Form    | Long Form     | Description
 -i            | --input       | Input a: URL, file or folder. For folders a wildcard can be used (e.g. '/*.js').
 -o            | --output      | Where to save the file, including file name or output to CLI. Default: output.html
 -r            | --regex       | RegEx for filtering purposes against found endpoints (e.g. ^/api/)
+-d            | --domain      | Toggle to use when analyzing an entire domain. Enumerates over all found JS files.
 -b            | --burp        | Toggle to use when inputting a Burp 'Save selected' file containing multiple JS files
 -c            | --cookies     | Add cookies to the request
 -h            | --help        | show the help message and exit
@@ -46,6 +47,10 @@ Short Form    | Long Form     | Description
 * CLI ouput (doesn't use jsbeautifier, which makes it very fast):
 
 `python linkfinder.py -i https://example.com/1.js -o cli`
+
+* Analyzing an entire domain and its JS files:
+
+`python linkfinder.py -i https://example.com -d`
 
 * Burp input (select in target the files you want to save, right click, `Save selected items`, feed that file as input):
 
