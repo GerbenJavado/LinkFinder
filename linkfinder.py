@@ -261,7 +261,7 @@ for url in urls:
                 else:
                     html += '''
                     <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
-                    ''' % (cgi.escape(url), cgi.escape(url))
+                    ''' % (cgi.escape(endpoint), cgi.escape(endpoint))
 
                     for endpoint2 in new_endpoints:
                         url = cgi.escape(endpoint2[1])
