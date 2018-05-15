@@ -18,6 +18,9 @@ except ImportError:
 
 # Parse command line
 parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--domain",
+                    help="Input a domain to recursively parse all javascript located in a page",
+                    action="store_true")
 parser.add_argument("-i", "--input",
                     help="Input a: URL, file or folder. \
                     For folders a wildcard can be used (e.g. '/*.js').",
@@ -217,12 +220,50 @@ for url in urls:
             file = send_request(url)
         except Exception as e:
             parser_error("invalid input defined or SSL error: %s" % e)
-    else: 
+    else:
         file = url['js']
         url = url['url']
 
     endpoints = parser_file(file)
+    if args.domain:
+        for endpoint in endpoints:
+            endpoint = cgi.escape(endpoint[1]).encode('ascii', 'ignore').decode('utf8')
+            if endpoint[-3:] == ".js":
+                if endpoint[:2] == "//":
+                    endpoint = "https:" + endpoint
+                print("Running against: " + endpoint)
+                print("")
+                try:
+                    file = send_request(endpoint)
+                    new_endpoints = parser_file(file)
+                    if args.output == 'cli':
+                        cli_output(new_endpoints)
+                    else:
+                        html += '''
+                        <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
+                        ''' % (cgi.escape(url), cgi.escape(url))
 
+                        for endpoint2 in new_endpoints:
+                           url = cgi.escape(endpoint2[1])
+                           string = "<div><a href='%s' class='text'>%s" % (
+                              cgi.escape(url),
+                              cgi.escape(url)
+                           )
+                           string2 = "</a><div class='container'>%s</div></div>" % cgi.escape(
+                               endpoint2[0]
+                           )
+                           string2 = string2.replace(
+                               cgi.escape(endpoint2[1]),
+                               "<span style='background-color:yellow'>%s</span>" %
+                               cgi.escape(endpoint2[1])
+                           )
+                           html += string + string2
+                except Exception as e:
+                    parser_error("invalid input defined or SSL error: %s" % e)
+                print("")
+    print("")
+    print("Running against: " + args.input)
+    print("")
     if args.output == 'cli':
         cli_output(endpoints)
     else:
@@ -244,7 +285,7 @@ for url in urls:
                 "<span style='background-color:yellow'>%s</span>" %
                 cgi.escape(endpoint[1])
             )
-        
+
             html += string + string2
 
 if args.output != 'cli':
