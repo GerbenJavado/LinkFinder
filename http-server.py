@@ -1,53 +1,56 @@
-#http-server.py by Gerben_Javado and Karel_Origin
-import socket, re, urllib, os, colorama, platform, getpass, sys
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from urlparse import unquote
+import os, re, platform
 
-colorama.init(autoreset=True)
-if os.name != 'nt':
-    if 'darwin' in platform.system().lower():
-        os_path = '/Users'
-    elif 'linux' in platform.system().lower():
-        os_path = '/home'
+class S(BaseHTTPRequestHandler):
+    def _set_headers(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
 
-    path_linkfinder = os.popen('''
-                find %s/%s -type f -name "linkfinder.py" -exec grep -il "Gerben_Javado" {} \; -print -quit | awk '{print $1; exit}'
-    ''' % (os_path, getpass.getuser())).read().replace('linkfinder.py','').rstrip()
+    def do_GET(self):
+        self._set_headers()
+        self.wfile.write("OK")
+        
+    def do_POST(self):
+        content_length = int(self.headers.getheader("content-length", 0))
+        body = self.rfile.read(content_length)
 
-else:
-    path_linkfinder = ''
-    if path_linkfinder == '':
-        warning = """
-                    It looks like you are using Windows and haven't changed the 'path_linkfinder' variable.\n
-                    Please check the installation guide on Github or use this tool on Linux/OS X to fix this automatically.
-                """
-        print warning
+        url = getParameter("url", body)
+        cookies = getParameter("cookies", body)
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('localhost', 8080)
-s.bind(server_address)
-s.listen(1)
+        self._set_headers()
+        self.wfile.write(LinkFinder(url, cookies))
 
-while True:
-  try:
-    connection, client_address = s.accept()
-    request = connection.recv(500)
+    def log_message(self, format, *args):
+    	# Prevent the python script from logging every request.
+    	return
+    
+def getParameter(param, body):
+	return unquote(re.findall("%s=([^&]*)" % param, body).pop(0))
 
-    path = re.findall("GET /([^ ]*)", str(request))
-    path = path[0] 
-    file = str(path.split('?').pop(1).split('&')[0].split('=')[1])
+def LinkFinder(url, cookies):
+    output = os.popen("python -u %s -o cli -i %s -c %s" % (path_linkfinder, ('"' + url.replace('"', '\\"') + '"'), ('"' + cookies.replace('"', '\\"') + '"'))).read()
+    print("JS File: %s\n\n%s\n---------------------" % (url, output))
 
-    if (sys.version_info > (3, 0)):
-        import urllib.parse
-        url = urllib.parse.unquote(file)
+    return output
+
+def run(server_class=HTTPServer, handler_class=S, port=8080):
+    global path_linkfinder
+	
+    if platform.system() == "Windows":
+        # Please change this variable to your LinkFinder path, Example path:
+        path_linkfinder = "C:\\Users\\karel\\Documents\\LinkFinder\\linkfinder.py"
     else:
-        url = urllib.unquote(file).decode('utf8')
+        path_linkfinder = os.popen("find / -type f -name \"linkfinder.py\" -exec grep -il \"Gerben_Javado\" {} \; -print -quit | awk '{print $1; exit}'").read()
 
-    print(colorama.Fore.RED + url)
-    output = os.popen('python -u %s/linkfinder.py -o cli -i %s' % (path_linkfinder, "'" + url.replace("'", "'\\''") + "'")).read()
-    if "SSL error" in output:
-        output = os.popen('python -u %s/linkfinder.py -o cli -i %s' % (path_linkfinder, '"' + url.replace("'", "'\\''").replace("https", "http") + '"')).read()
-        print("\n" + colorama.Fore.YELLOW + "SSL error, using http..\n")
-    print(output)
+    if os.path.isfile(path_linkfinder) == False:
+        print("Path '%s' is invalid" % path_linkfinder)
+        raise SystemExit
 
-    connection.close()
-  except IndexError:
-    pass
+    server_address = ('0.0.0.0', port)
+    httpd = server_class(server_address, handler_class)
+    print("Starting httpd...")
+    httpd.serve_forever()
+
+run()

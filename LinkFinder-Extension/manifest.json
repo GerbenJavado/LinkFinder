@@ -1,0 +1,27 @@
+{
+  "name": "LinkFinder",
+  "version": "2.0",
+  "description": "Automatically looks for endpoints in JS files as you browse.",
+  
+  "permissions": [
+  	"webRequest", "webRequestBlocking",
+    "https://*/*", "http://*/*",
+    "notifications",
+    "storage"
+  ],
+  
+  "browser_action": {
+  	"default_title": "Test Popup",
+  	"default_popup": "/popup/popup.html"
+  }, 
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "sandbox": {
+    "pages": ["/popup/graph/graph.html"]
+  },
+
+  "manifest_version": 2
+}

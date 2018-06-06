@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>LinkFinder | Graph</title>
+
+	<script type="text/javascript" src="plotly-latest.min.js"></script>
+
+	<style type="text/css">
+		#graph {
+			height: 100%;
+			width: 100%;
+		}
+
+		body {
+			overflow-y: hidden;
+			overflow-x: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div id="graph"></div>
+
+	<script>
+		Plotly.newPlot(graph, {})
+	</script>
+
+	<script type="text/javascript">
+		window.addEventListener("message", function(event){
+			if(event.data.graph_data && event.origin == (location.protocol + "//" + location.hostname)) {
+				graph_data = JSON.parse(event.data.graph_data);
+				Plotly.newPlot(graph, graph_data);
+			}
+		})
+
+		window.onload = function() {
+			window.opener.postMessage("loaded", "*");
+		}
+
+		window.onresize = function() {
+			Plotly.Plots.resize(graph)
+		}
+	</script>
+</body>
+</html>

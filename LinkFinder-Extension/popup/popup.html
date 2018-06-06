@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Popup</title>
+
+    <script src="jquery.js"></script>
+    <script src="popup.js"></script>
+    <!--<script src="plotly-latest.min.js"></script>!-->
+
+    <link rel="stylesheet" href="popup.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="../materialize/css/materialize.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="../materialize/js/materialize.js"></script>
+
+    <!-- Inline CSS !-->
+    <style>
+        .dropdown-content .material-icons {
+            text-align: center;
+            margin: auto;
+        }
+
+        .dropdown-content .material-icons a {
+            font-size: 20px;
+            color: black;
+        }
+
+        #container {
+            text-align: center;
+            margin: auto;
+            overflow-y: auto;
+            height: 250px;
+        }
+
+        label {
+            font-size: 12px;
+        }
+
+        .setting { 
+            width: 70%;
+            text-align: center;
+            margin: auto;
+            margin-bottom: 15px;
+            margin-top: 15px;
+        }
+
+        #regex {
+            display: inline-block;
+        }
+
+        #store-urls-switch {
+            margin-top: 10px;
+        }
+
+        #graph {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+	<nav id="navbar" style="background-color: grey;" class="nav-extended">
+        <div class="nav-wrapper">
+            <a style="font-size: 25px;" class="brand-logo center">LinkFinder</a>
+            <ul class="right">
+      			<!-- Dropdown Trigger -->
+      			<li><a class="dropdown-trigger" data-target="dropdown1"><i class="material-icons right">arrow_drop_down</i></a></li>
+   			</ul>
+        </div>
+        <ul id="dropdown1" class="dropdown-content">
+  			<li><i class="large material-icons"><a href="#default">home</a></i></li>
+  			<li><i class="large material-icons"><a href="#settings">settings</a></i></li>
+            <li><i class="large material-icons"><a href="#statistics">insert_chart</a></i></li>
+		</ul>
+    </nav>
+    <div id="container">
+
+    	<div class="tabContent" id="default">
+            <h1 style="font-size: 12px;margin:0;margin-top:5px;margin-bottom:5px;">Home</h1>
+    		
+            <div style="margin-bottom:5px;">
+                <p>Total unique endpoints found:</p><b id="uniques-indicator">0</b><br>
+                <a id="download_urls" class="waves-effect waves-light btn" style="margin-top: 10px; margin-bottom: 10px;">Download Urls</a>
+            </div>
+            
+            <div>
+                <p>Connection status:</p>
+                <svg height="100" width="100">
+                    <circle id="status" cx="50" cy="25" r="15" stroke-width="3" fill="lightgreen" />  
+                </svg> 
+            </div>
+    	</div>
+
+    	<div style="display:none;" class="tabContent" id="settings">
+    		<div class="switch setting">
+    			<label>LinkFinder Extension: </label><br>
+    			<label>Off<input id="extension-switch" type="checkbox"><span class="lever"></span>On</label>
+    		</div>
+
+            <div class="setting">
+                <label>Scope: </label><br>
+                <input id="regex" class="input-field inline" placeholder="://example.com/">
+            </div>
+
+            <label>Other: </label><br>
+            <div class="switch setting">
+                <label>Save urls: <br> Off<input id="save-urls-switch" type="checkbox"><span class="lever"></span>On</label>
+
+                <a id="clear_urls" class="waves-effect waves-light btn" style="margin-top: 10px; margin-bottom: 10px;">Clear Urls</a>
+                <a id="clear_graph_data" class="waves-effect waves-light btn">Clear Graph Data</a>
+            </div>
+
+            <div class="setting">
+                <label>Notify me when one of these keywords is found in a url:</label>
+                <textarea id="keywords" class="materialize-textarea"></textarea>
+            </div>
+    	</div>
+
+        <div style="display: none;" class="tabContent" id="statistics">
+            <p>This can only be displayed in a new <a href="#" id="graph-tab">tab</a>.</p>
+        </div>
+    </div>
+</body>
+
+</html>
