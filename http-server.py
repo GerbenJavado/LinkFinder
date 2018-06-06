@@ -38,12 +38,12 @@ def LinkFinder(url, cookies):
 def run(server_class=HTTPServer, handler_class=S, port=8080):
     global path_linkfinder
 	
-    if platform.system() == "Windows":
-        # Please change this variable to your LinkFinder path, Example path:
-        path_linkfinder = "C:\\Users\\karel\\Documents\\LinkFinder\\linkfinder.py"
-    else:
-        path_linkfinder = os.popen("find / -type f -name \"linkfinder.py\" -exec grep -il \"Gerben_Javado\" {} \; -print -quit | awk '{print $1; exit}'").read()
+    # Change this path to where linkfinder.py is located, Example path:
+    # path_linkfinder = "C:\\Users\\karel\\Documents\\LinkFinder\\linkfinder.py"
 
+    # Default path
+    path_linkfinder = "./linkfinder.py"
+    
     if os.path.isfile(path_linkfinder) == False:
         print("Path '%s' is invalid" % path_linkfinder)
         raise SystemExit
