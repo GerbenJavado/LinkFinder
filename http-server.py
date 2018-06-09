@@ -1,6 +1,12 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from urlparse import unquote
-import os, re, platform
+import os, re, platform, argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--ip", default="0.0.0.0", type=str, help="IP to listen on (0.0.0.0 by default")
+parser.add_argument("--port", default="8080", type=int, help="port to listen on (8080 by default)")
+
+args = parser.parse_args()
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -23,11 +29,11 @@ class S(BaseHTTPRequestHandler):
         self.wfile.write(LinkFinder(url, cookies))
 
     def log_message(self, format, *args):
-    	# Prevent the python script from logging every request.
-    	return
+        # Prevent the python script from logging every request.
+        return
     
 def getParameter(param, body):
-	return unquote(re.findall("%s=([^&]*)" % param, body).pop(0))
+    return unquote(re.findall("%s=([^&]*)" % param, body).pop(0))
 
 def LinkFinder(url, cookies):
     output = os.popen("python -u %s -o cli -i %s -c %s" % (path_linkfinder, ('"' + url.replace('"', '\\"') + '"'), ('"' + cookies.replace('"', '\\"') + '"'))).read()
@@ -35,9 +41,9 @@ def LinkFinder(url, cookies):
 
     return output
 
-def run(server_class=HTTPServer, handler_class=S, port=8080):
+def run(server_class=HTTPServer, handler_class=S, port=args.port, ip=args.ip):
     global path_linkfinder
-	
+    
     # Change this path to where linkfinder.py is located, Example path:
     # path_linkfinder = "C:\\Users\\karel\\Documents\\LinkFinder\\linkfinder.py"
 
@@ -48,9 +54,9 @@ def run(server_class=HTTPServer, handler_class=S, port=8080):
         print("Path '%s' is invalid" % path_linkfinder)
         raise SystemExit
 
-    server_address = ('0.0.0.0', port)
+    server_address = (ip, port)
     httpd = server_class(server_address, handler_class)
-    print("Starting httpd...")
+    print("Listening on %s:%s" % (ip, port))
     httpd.serve_forever()
 
 run()
