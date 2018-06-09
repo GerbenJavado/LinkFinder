@@ -36,6 +36,24 @@ $(document).ready(function() {
         }
     })
 
+    $("#ip").blur(function(event){
+        if(event.target.value.length > 0) {
+            ip = event.target.value;
+            Obj.general.server_ip = ip;
+
+            UpdateStorage(Obj);
+        }
+    })
+
+    $("#port").blur(function(event){
+        if(event.target.value.length > 0) {
+            port = event.target.value;
+            Obj.general.server_port = port;
+
+            UpdateStorage(Obj);
+        }
+    })
+
     $("#clear_urls").click(function(){
         localStorage.removeItem("urls");
     })
@@ -87,6 +105,8 @@ $(document).ready(function() {
 
     $("#uniques-indicator").text(localStorage.getItem("urls") ? localStorage.getItem("urls").split(",").length : "0");
     $("#regex").val(Obj.popup.regex);
+    $("#ip").val(Obj.general.server_ip);
+    $("#port").val(Obj.general.server_port);
 
     $("#keywords")[0].innerHTML = $('<div/>').text(Obj.popup.keywords.join("&#10;")).html().replace(/&amp;/g, "&");
 
