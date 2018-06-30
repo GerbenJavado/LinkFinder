@@ -8,8 +8,8 @@ import os
 os.environ["BROWSER"] = "open"
 
 # Import libraries
-import re, sys, glob, cgi, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree
-from string import Template 
+import re, sys, glob, cgi, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree, gzip
+from string import Template
 
 try:
     from urllib.request import Request, urlopen
@@ -143,10 +143,19 @@ def send_request(url):
     q.add_header('Accept', 'text/html,\
         application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8')
     q.add_header('Accept-Language', 'en-US,en;q=0.8')
-    q.add_header('Accept-Encoding', '')
+    q.add_header('Accept-Encoding', 'gzip')
     q.add_header('Cookie', args.cookies)
 
-    return urlopen(q, context=sslcontext).read().decode('utf-8', 'replace')
+    response = urlopen(q, context=sslcontext)
+
+    if response.info().get('Content-Encoding') == 'gzip':
+        data = gzip.decompress(response.read())
+    elif response.info().get('Content-Encoding') == 'deflate':
+        data = response.read().read()
+    else:
+        data = response.read()
+
+    return data.decode('utf-8', 'replace')
 
 def parser_file(content):
     '''
@@ -279,11 +288,9 @@ for url in urls:
                         )
                         html += string + string2
             except Exception as e:
-                parser_error("invalid input defined or SSL error: %s" % e)
-            print("")
-    print("")
-    print("Running against: " + args.input)
-    print("")
+                print("Invalid input defined or SSL error for: " + endpoint)
+                continue
+    
     if args.output == 'cli':
         cli_output(endpoints)
     else:
