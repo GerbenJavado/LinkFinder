@@ -158,7 +158,7 @@ def send_request(url):
     response = urlopen(q, context=sslcontext)
 
     if response.info().get('Content-Encoding') == 'gzip':
-        data = GzipFile(fileobj= readBytesCustom(response.read())).read()
+        data = GzipFile(fileobj=readBytesCustom(response.read())).read()
     elif response.info().get('Content-Encoding') == 'deflate':
         data = response.read().read()
     else:
