@@ -8,8 +8,17 @@ import os
 os.environ["BROWSER"] = "open"
 
 # Import libraries
-import re, sys, glob, cgi, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree, gzip
+import re, sys, glob, cgi, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree
+
+from gzip import GzipFile
 from string import Template
+
+try:
+    from StringIO import StringIO
+    readBytesCustom = StringIO
+except ImportError:
+    from io import BytesIO
+    readBytesCustom = BytesIO
 
 try:
     from urllib.request import Request, urlopen
@@ -149,7 +158,7 @@ def send_request(url):
     response = urlopen(q, context=sslcontext)
 
     if response.info().get('Content-Encoding') == 'gzip':
-        data = gzip.decompress(response.read())
+        data = GzipFile(fileobj=readBytesCustom(response.read())).read()
     elif response.info().get('Content-Encoding') == 'deflate':
         data = response.read().read()
     else:
