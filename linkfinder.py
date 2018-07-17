@@ -15,8 +15,10 @@ from string import Template
 
 try:
     from StringIO import StringIO
+    readBytesCustom = StringIO
 except ImportError:
-    from io import StringIO
+    from io import BytesIO
+    readBytesCustom = BytesIO
 
 try:
     from urllib.request import Request, urlopen
@@ -156,7 +158,7 @@ def send_request(url):
     response = urlopen(q, context=sslcontext)
 
     if response.info().get('Content-Encoding') == 'gzip':
-        data = GzipFile(fileobj=StringIO(response.read())).read()
+        data = GzipFile(fileobj= readBytesCustom(response.read())).read()
     elif response.info().get('Content-Encoding') == 'deflate':
         data = response.read().read()
     else:
