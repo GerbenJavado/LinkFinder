@@ -138,12 +138,11 @@ def parser_file(content, regex):
     '''
     
     # Beautify
-    if args.output != 'cli':
-        if len(content) > 1000000:
-            content = content.replace(";",";\r\n").replace(",",",\r\n")
-        else:
-            content = jsbeautifier.beautify(content)
-    
+    if len(content) > 1000000:
+        content = content.replace(";",";\r\n").replace(",",",\r\n")
+    else:
+        content = jsbeautifier.beautify(content)
+
     items = re.findall(regex, content)
     items = list(set(items))
         
