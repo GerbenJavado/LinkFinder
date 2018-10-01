@@ -132,7 +132,7 @@ def send_request(url):
 
     return data.decode('utf-8', 'replace')
 
-def parser_file(content, regex):
+def parser_file(content, regex, more_regex=None):
     '''
     Parse Input
     '''
@@ -153,8 +153,8 @@ def parser_file(content, regex):
         # Remove other capture groups from regex results
         group = list(filter(None, item))
 
-        if args.regex:
-            if re.search(args.regex, group[1]):
+        if more_regex:
+            if re.search(more_regex, group[1]):
                 filtered_items.append(group)
         else:
             filtered_items.append(group)
@@ -257,7 +257,7 @@ if __name__ == "__main__":
             file = url['js']
             url = url['url']
 
-        endpoints = parser_file(file, regex)
+        endpoints = parser_file(file, regex, args.regex)
         if args.domain:
             for endpoint in endpoints:
                 endpoint = cgi.escape(endpoint[1]).encode('ascii', 'ignore').decode('utf8')
@@ -268,7 +268,7 @@ if __name__ == "__main__":
                 print("")
                 try:
                     file = send_request(endpoint)
-                    new_endpoints = parser_file(file, regex)
+                    new_endpoints = parser_file(file, regex, args.regex)
                     if args.output == 'cli':
                         cli_output(new_endpoints)
                     else:
