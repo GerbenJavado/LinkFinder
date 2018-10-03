@@ -60,6 +60,12 @@ Short Form    | Long Form     | Description
 
 ``python linkfinder.py -i 'Desktop/*.js' -r ^/api/ -o results.html``
 
+## Unit-test
+
+* Require pytest
+
+``pytest test_parser.py``
+
 ## Final remarks
 - This is the first time I publicly release a tool. Contributions are much appreciated!
 - LinkFinder is published under the [MIT License](https://github.com/GerbenJavado/LinkFinder/blob/master/LICENSE).
