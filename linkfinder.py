@@ -26,9 +26,9 @@ except ImportError:
     from urllib2 import Request, urlopen
 
 # Regex used
-regex = re.compile(r"""
+regex_str = r"""
 
-  ((?:"|')                            # Start newline delimiter
+  (?:"|')                               # Start newline delimiter
 
   (?:
     ((?:[a-zA-Z]{1,10}://|//)           # Match a scheme [a-Z]*1-10 or //
@@ -55,9 +55,11 @@ regex = re.compile(r"""
 
   )
 
-  (?:"|'))                            # End newline delimiter
+  (?:"|')                               # End newline delimiter
 
-""", re.VERBOSE)
+"""
+
+context_delimiter_str = "[^\n]*"
 
 def parser_error(errmsg):
     '''
@@ -86,7 +88,7 @@ def parser_input(input):
     if args.burp:
         jsfiles = []
         items = xml.etree.ElementTree.fromstring(open(args.input, "r").read())
-        
+
         for item in items:
             jsfiles.append({"js":base64.b64decode(item.find('response').text).decode('utf-8',"replace"), "url":item.find('url').text})
         return jsfiles
@@ -132,20 +134,28 @@ def send_request(url):
 
     return data.decode('utf-8', 'replace')
 
-def parser_file(content, regex, more_regex=None):
+def parser_file(content, regex_str, mode=1, more_regex=None):
     '''
     Parse Input
+    mode 0: Without context
+    mode 1: With context
     '''
-    
-    # Beautify
-    if len(content) > 1000000:
-        content = content.replace(";",";\r\n").replace(",",",\r\n")
+    global context_delimiter_str
+
+    if mode == 1:
+        # Beautify
+        if len(content) > 1000000:
+            content = content.replace(";",";\r\n").replace(",",",\r\n")
+        else:
+            content = jsbeautifier.beautify(content)
+        # Wrap regex with group of newline
+        regex = re.compile("(" + context_delimiter_str + regex_str + context_delimiter_str + ")", re.VERBOSE)
     else:
-        content = jsbeautifier.beautify(content)
+        regex = re.compile(regex_str, re.VERBOSE)
 
     items = re.findall(regex, content)
     items = list(set(items))
-        
+
     # Match Regex
     filtered_items = []
 
@@ -166,7 +176,7 @@ def cli_output(endpoints):
     Output to CLI
     '''
     for endpoint in endpoints:
-        print(cgi.escape(endpoint[1]).encode(
+        print(cgi.escape(endpoint[0]).encode(
             'ascii', 'ignore').decode('utf8'))
 
 def html_save(html):
@@ -242,6 +252,10 @@ if __name__ == "__main__":
     if args.input[-1:] == "/":
         args.input = args.input[:-1]
 
+    mode = 1
+    if args.output == "cli":
+        mode = 0
+
     # Convert input to URLs or JS files
     urls = parser_input(args.input)
 
@@ -257,7 +271,7 @@ if __name__ == "__main__":
             file = url['js']
             url = url['url']
 
-        endpoints = parser_file(file, regex, args.regex)
+        endpoints = parser_file(file, regex_str, mode, args.regex)
         if args.domain:
             for endpoint in endpoints:
                 endpoint = cgi.escape(endpoint[1]).encode('ascii', 'ignore').decode('utf8')
@@ -268,7 +282,7 @@ if __name__ == "__main__":
                 print("")
                 try:
                     file = send_request(endpoint)
-                    new_endpoints = parser_file(file, regex, args.regex)
+                    new_endpoints = parser_file(file, regex_str, mode, args.regex)
                     if args.output == 'cli':
                         cli_output(new_endpoints)
                     else:
