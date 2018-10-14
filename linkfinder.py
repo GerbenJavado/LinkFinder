@@ -30,7 +30,7 @@ regex_str = r"""
 
   (?:"|')                               # Start newline delimiter
 
-  (?:
+  (?P<link>
     ((?:[a-zA-Z]{1,10}://|//)           # Match a scheme [a-Z]*1-10 or //
     [^"'/]{1,}\.                        # Match a domainname (any character + dot)
     [a-zA-Z]{2,}[^"']{0,})              # The domainextension and/or path
@@ -137,8 +137,13 @@ def send_request(url):
 def parser_file(content, regex_str, mode=1, more_regex=None):
     '''
     Parse Input
-    mode 0: Without context
-    mode 1: With context
+    content:    string of content to be searched
+    regex_str:  string of regex (must wrap regex group with ?P<link>)
+    mode:       mode of parsing. Set 1 to include surrounding contexts in the result
+    more_regex: string of regex to filter the result
+
+    Return the list of ["link": link, "context": context]
+    The context is optional if mode=1 is provided.
     '''
     global context_delimiter_str
 
@@ -148,26 +153,24 @@ def parser_file(content, regex_str, mode=1, more_regex=None):
             content = content.replace(";",";\r\n").replace(",",",\r\n")
         else:
             content = jsbeautifier.beautify(content)
-        # Wrap regex with group of newline
-        regex = re.compile("(" + context_delimiter_str + regex_str + context_delimiter_str + ")", re.VERBOSE)
+        # Wrap regex group with newline. This will return "link" and "context"
+        regex = re.compile("(?P<context>" + context_delimiter_str + regex_str + context_delimiter_str + ")", re.VERBOSE)
     else:
         regex = re.compile(regex_str, re.VERBOSE)
 
-    items = re.findall(regex, content)
-    items = list(set(items))
+    items = re.finditer(regex, content)
+    # Remove duplicate
+    items = {item['link']:item for item in items}.values()
 
     # Match Regex
     filtered_items = []
-
     for item in items:
         # Remove other capture groups from regex results
-        group = list(filter(None, item))
-
         if more_regex:
-            if re.search(more_regex, group[1]):
-                filtered_items.append(group)
+            if re.search(more_regex, item["link"]):
+                filtered_items.append(item)
         else:
-            filtered_items.append(group)
+            filtered_items.append(item)
 
     return filtered_items
 
@@ -176,7 +179,7 @@ def cli_output(endpoints):
     Output to CLI
     '''
     for endpoint in endpoints:
-        print(cgi.escape(endpoint[0]).encode(
+        print(cgi.escape(endpoint["link"]).encode(
             'ascii', 'ignore').decode('utf8'))
 
 def html_save(html):
@@ -274,7 +277,7 @@ if __name__ == "__main__":
         endpoints = parser_file(file, regex_str, mode, args.regex)
         if args.domain:
             for endpoint in endpoints:
-                endpoint = cgi.escape(endpoint[1]).encode('ascii', 'ignore').decode('utf8')
+                endpoint = cgi.escape(endpoint["link"]).encode('ascii', 'ignore').decode('utf8')
                 endpoint = check_url(endpoint)
                 if endpoint is False:
                     continue
@@ -291,18 +294,18 @@ if __name__ == "__main__":
                         ''' % (cgi.escape(endpoint), cgi.escape(endpoint))
 
                         for endpoint2 in new_endpoints:
-                            url = cgi.escape(endpoint2[1])
+                            url = cgi.escape(endpoint2["link"])
                             string = "<div><a href='%s' class='text'>%s" % (
                                 cgi.escape(url),
                                 cgi.escape(url)
                             )
                             string2 = "</a><div class='container'>%s</div></div>" % cgi.escape(
-                                endpoint2[0]
+                                endpoint2["context"]
                             )
                             string2 = string2.replace(
-                                cgi.escape(endpoint2[1]),
+                                cgi.escape(endpoint2["link"]),
                                 "<span style='background-color:yellow'>%s</span>" %
-                                cgi.escape(endpoint2[1])
+                                cgi.escape(endpoint2["link"])
                             )
                             html += string + string2
                 except Exception as e:
@@ -317,18 +320,18 @@ if __name__ == "__main__":
                 ''' % (cgi.escape(url), cgi.escape(url))
 
             for endpoint in endpoints:
-                url = cgi.escape(endpoint[1])
+                url = cgi.escape(endpoint["link"])
                 string = "<div><a href='%s' class='text'>%s" % (
                     cgi.escape(url),
                     cgi.escape(url)
                 )
                 string2 = "</a><div class='container'>%s</div></div>" % cgi.escape(
-                    endpoint[0]
+                    endpoint["context"]
                 )
                 string2 = string2.replace(
-                    cgi.escape(endpoint[1]),
+                    cgi.escape(endpoint["link"]),
                     "<span style='background-color:yellow'>%s</span>" %
-                    cgi.escape(endpoint[1])
+                    cgi.escape(endpoint["link"])
                 )
 
                 html += string + string2

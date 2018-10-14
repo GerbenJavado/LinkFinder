@@ -9,7 +9,7 @@ def get_parse_cli(str):
     endpoints = parser_file(str, regex_str, mode=0)
     ret = []
     for endpoint in endpoints:
-        ret.append(endpoint[0])
+        ret.append(endpoint["link"])
     return ret
 
 def test_parser_cli():
