@@ -59,7 +59,7 @@ regex_str = r"""
 
 """
 
-context_delimiter_str = "[^\n]*"
+context_delimiter_str = "\n"
 
 def parser_error(errmsg):
     '''
@@ -134,6 +134,38 @@ def send_request(url):
 
     return data.decode('utf-8', 'replace')
 
+def getContext(list_matches, content, include_delimiter=0):
+    global context_delimiter_str
+
+    items = []
+    for m in list_matches:
+        match_str = m[0]["link"]
+        match_start = m[1]
+        match_end = m[2]
+        context_start_index = match_start
+        context_end_index = match_end
+        delimiter_len = len(context_delimiter_str)
+        content_max_index = len(content) - 1
+
+        while content[context_start_index] != context_delimiter_str and context_start_index > 0:
+            context_start_index = context_start_index - 1
+
+        while content[context_end_index] != context_delimiter_str and context_end_index < content_max_index:
+            context_end_index = context_end_index + 1
+
+        if include_delimiter:
+            context = content[context_start_index: context_end_index]
+        else:
+            context = content[context_start_index + delimiter_len: context_end_index]
+
+        item = {
+            "link": match_str,
+            "context": context
+        }
+        items.append(item)
+
+    return items
+
 def parser_file(content, regex_str, mode=1, more_regex=None):
     '''
     Parse Input
@@ -145,8 +177,6 @@ def parser_file(content, regex_str, mode=1, more_regex=None):
     Return the list of ["link": link, "context": context]
     The context is optional if mode=1 is provided.
     '''
-    global context_delimiter_str
-
     if mode == 1:
         # Beautify
         if len(content) > 1000000:
@@ -154,13 +184,18 @@ def parser_file(content, regex_str, mode=1, more_regex=None):
         else:
             content = jsbeautifier.beautify(content)
         # Wrap regex group with newline. This will return "link" and "context"
-        regex = re.compile("(?P<context>" + context_delimiter_str + regex_str + context_delimiter_str + ")", re.VERBOSE)
-    else:
-        regex = re.compile(regex_str, re.VERBOSE)
+        # regex = re.compile("(?P<context>" + context_delimiter_str + regex_str + context_delimiter_str + ")", re.VERBOSE)
 
-    items = re.finditer(regex, content)
-    # Remove duplicate
-    items = {item['link']:item for item in items}.values()
+    regex = re.compile(regex_str, re.VERBOSE)
+
+    f = open("tmp_content", "w+")
+    f.write(content)
+
+    if mode == 1:
+        all_matches = [(m.groupdict(), m.start(0), m.end(0)) for m in re.finditer(regex, content)]
+        items = getContext(all_matches, content)
+    else:
+        items = [m.groupdict() for m in re.finditer(regex, content)]
 
     # Match Regex
     filtered_items = []
