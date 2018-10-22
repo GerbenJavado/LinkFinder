@@ -30,7 +30,7 @@ regex_str = r"""
 
   (?:"|')                               # Start newline delimiter
 
-  (?P<link>
+  (
     ((?:[a-zA-Z]{1,10}://|//)           # Match a scheme [a-Z]*1-10 or //
     [^"'/]{1,}\.                        # Match a domainname (any character + dot)
     [a-zA-Z]{2,}[^"']{0,})              # The domainextension and/or path
@@ -139,7 +139,7 @@ def getContext(list_matches, content, include_delimiter=0):
 
     items = []
     for m in list_matches:
-        match_str = m[0]["link"]
+        match_str = m[0]
         match_start = m[1]
         match_end = m[2]
         context_start_index = match_start
@@ -166,13 +166,14 @@ def getContext(list_matches, content, include_delimiter=0):
 
     return items
 
-def parser_file(content, regex_str, mode=1, more_regex=None):
+def parser_file(content, regex_str, mode=1, more_regex=None, no_dup=1):
     '''
     Parse Input
     content:    string of content to be searched
-    regex_str:  string of regex (must wrap regex group with ?P<link>)
+    regex_str:  string of regex (Only 1 group should be matched)
     mode:       mode of parsing. Set 1 to include surrounding contexts in the result
     more_regex: string of regex to filter the result
+    no_dup:     remove duplicated link (context is NOT counted)
 
     Return the list of ["link": link, "context": context]
     The context is optional if mode=1 is provided.
@@ -183,19 +184,17 @@ def parser_file(content, regex_str, mode=1, more_regex=None):
             content = content.replace(";",";\r\n").replace(",",",\r\n")
         else:
             content = jsbeautifier.beautify(content)
-        # Wrap regex group with newline. This will return "link" and "context"
-        # regex = re.compile("(?P<context>" + context_delimiter_str + regex_str + context_delimiter_str + ")", re.VERBOSE)
 
     regex = re.compile(regex_str, re.VERBOSE)
 
-    f = open("tmp_content", "w+")
-    f.write(content)
-
     if mode == 1:
-        all_matches = [(m.groupdict(), m.start(0), m.end(0)) for m in re.finditer(regex, content)]
+        all_matches = [(m.group(1), m.start(0), m.end(0)) for m in re.finditer(regex, content)]
         items = getContext(all_matches, content)
     else:
-        items = [m.groupdict() for m in re.finditer(regex, content)]
+        items = [{"link": m.group(1)} for m in re.finditer(regex, content)]
+
+    if no_dup:
+        items = [dict(t) for t in {tuple(sorted(d.items())) for d in items}]
 
     # Match Regex
     filtered_items = []
