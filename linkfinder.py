@@ -194,7 +194,13 @@ def parser_file(content, regex_str, mode=1, more_regex=None, no_dup=1):
         items = [{"link": m.group(1)} for m in re.finditer(regex, content)]
 
     if no_dup:
-        items = [dict(t) for t in {tuple(sorted(d.items())) for d in items}]
+        all_links = set()
+        no_dup_items = []
+        for item in items:
+            if item["link"] not in all_links:
+                all_links.add(item["link"])
+                no_dup_items.append(item)
+        items = no_dup_items
 
     # Match Regex
     filtered_items = []
