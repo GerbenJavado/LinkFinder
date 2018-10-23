@@ -134,9 +134,13 @@ def send_request(url):
 
     return data.decode('utf-8', 'replace')
 
-def getContext(list_matches, content, include_delimiter=0):
-    global context_delimiter_str
-
+def getContext(list_matches, content, include_delimiter=0, context_delimiter_str="\n"):
+    '''
+    Parse Input
+    list_matches:   list of tuple [link, start_index, end_index]
+    content:        content to search the context
+    include_delimiter   also include delimiter in the context
+    '''
     items = []
     for m in list_matches:
         match_str = m[0]
@@ -178,6 +182,8 @@ def parser_file(content, regex_str, mode=1, more_regex=None, no_dup=1):
     Return the list of ["link": link, "context": context]
     The context is optional if mode=1 is provided.
     '''
+    global context_delimiter_str
+
     if mode == 1:
         # Beautify
         if len(content) > 1000000:
@@ -189,11 +195,12 @@ def parser_file(content, regex_str, mode=1, more_regex=None, no_dup=1):
 
     if mode == 1:
         all_matches = [(m.group(1), m.start(0), m.end(0)) for m in re.finditer(regex, content)]
-        items = getContext(all_matches, content)
+        items = getContext(all_matches, content, context_delimiter_str=context_delimiter_str)
     else:
         items = [{"link": m.group(1)} for m in re.finditer(regex, content)]
 
     if no_dup:
+        # Remove duplication
         all_links = set()
         no_dup_items = []
         for item in items:
