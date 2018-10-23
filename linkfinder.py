@@ -137,9 +137,9 @@ def send_request(url):
 def getContext(list_matches, content, include_delimiter=0, context_delimiter_str="\n"):
     '''
     Parse Input
-    list_matches:   list of tuple [link, start_index, end_index]
-    content:        content to search the context
-    include_delimiter   also include delimiter in the context
+    list_matches:       list of tuple (link, start_index, end_index)
+    content:            content to search for the context
+    include_delimiter   Set 1 to include delimiter in context
     '''
     items = []
     for m in list_matches:
@@ -174,7 +174,7 @@ def parser_file(content, regex_str, mode=1, more_regex=None, no_dup=1):
     '''
     Parse Input
     content:    string of content to be searched
-    regex_str:  string of regex (Only 1 group should be matched)
+    regex_str:  string of regex (The link should be in the group(1))
     mode:       mode of parsing. Set 1 to include surrounding contexts in the result
     more_regex: string of regex to filter the result
     no_dup:     remove duplicated link (context is NOT counted)
