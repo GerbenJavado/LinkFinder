@@ -44,13 +44,14 @@ regex_str = r"""
     |
 
     ([a-zA-Z0-9_\-/]{1,}/               # Relative endpoint with /
-    [a-zA-Z0-9_\-/]{1,}\.[a-zA-Z]{1,4}  # Rest + extension
+    [a-zA-Z0-9_\-/]{1,}                 # Resource name
+    \.(?:[a-zA-Z]{1,4}|action)          # Rest + extension (length 1-4 or action)
     (?:[\?|/][^"|']{0,}|))              # ? mark with parameters
 
     |
 
     ([a-zA-Z0-9_\-]{1,}                 # filename
-    \.(?:php|asp|aspx|jsp|json)         # . + extension
+    \.(?:php|asp|aspx|jsp|json|action)  # . + extension
     (?:\?[^"|']{0,}|))                  # ? mark with parameters
 
   )
