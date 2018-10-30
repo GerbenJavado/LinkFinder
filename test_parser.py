@@ -29,6 +29,7 @@ def test_parser_cli():
     assert get_parse_cli("\"api/create.php?user=test&pass=test\"") == ["api/create.php?user=test&pass=test"]
     assert get_parse_cli("\"api/create.php?user=test#home\"") == ["api/create.php?user=test#home"]
     assert get_parse_cli("\"user/create.action?user=Test\"") == ["user/create.action?user=Test"]
+    assert get_parse_cli("\"user/create.notaext?user=Test\"") == []
 
     assert get_parse_cli("\"/path/to/file\"") == ["/path/to/file"]
     assert get_parse_cli("\"../path/to/file\"") == ["../path/to/file"]
@@ -38,6 +39,10 @@ def test_parser_cli():
     assert get_parse_cli("\"test_1.json\"") == ["test_1.json"]
     assert get_parse_cli("\"test2.aspx?arg1=tmp1+tmp2&arg2=tmp3\"") == ["test2.aspx?arg1=tmp1+tmp2&arg2=tmp3"]
     assert get_parse_cli("\"addUser.action\"") == ["addUser.action"]
+    assert get_parse_cli("\"main.js\"") == ["main.js"]
+    assert get_parse_cli("\"robots.txt\"") == ["robots.txt"]
+    assert get_parse_cli("\"users.xml\"") == ["users.xml"]
+    assert get_parse_cli("\"UserModel.name\"") == []
 
 def test_parser_cli_multi():
     assert set(get_parse_cli("href=\"http://example.com\";href=\"/api/create.php\"")) == set(["http://example.com", "/api/create.php"])
