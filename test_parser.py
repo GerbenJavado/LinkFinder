@@ -40,6 +40,7 @@ def test_parser_cli():
     assert get_parse_cli("\"test2.aspx?arg1=tmp1+tmp2&arg2=tmp3\"") == ["test2.aspx?arg1=tmp1+tmp2&arg2=tmp3"]
     assert get_parse_cli("\"addUser.action\"") == ["addUser.action"]
     assert get_parse_cli("\"main.js\"") == ["main.js"]
+    assert get_parse_cli("\"index.html\"") == ["index.html"]
     assert get_parse_cli("\"robots.txt\"") == ["robots.txt"]
     assert get_parse_cli("\"users.xml\"") == ["users.xml"]
     assert get_parse_cli("\"UserModel.name\"") == []
