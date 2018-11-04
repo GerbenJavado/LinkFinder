@@ -114,9 +114,7 @@ def send_request(url):
     Send requests with Requests
     '''
     q = Request(url)
-    # Support websites that force TLSv1.2
-    sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-
+    
     q.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
         AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36')
     q.add_header('Accept', 'text/html,\
@@ -124,8 +122,13 @@ def send_request(url):
     q.add_header('Accept-Language', 'en-US,en;q=0.8')
     q.add_header('Accept-Encoding', 'gzip')
     q.add_header('Cookie', args.cookies)
-
-    response = urlopen(q, context=sslcontext)
+    
+    try:
+        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        response = urlopen(q, context=sslcontext)
+    except:
+        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+        response = urlopen(q, context=sslcontext)
 
     if response.info().get('Content-Encoding') == 'gzip':
         data = GzipFile(fileobj=readBytesCustom(response.read())).read()
