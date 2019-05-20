@@ -36,6 +36,12 @@ def test_parser_cli():
     assert get_parse_cli("\"./path/to/file\"") == ["./path/to/file"]
     assert get_parse_cli("\"/wrong/file/test<>b\"") == []
 
+    # REST API (no extension)
+    assert get_parse_cli("\"api/user\"") == ["api/user"]
+    assert get_parse_cli("\"v1/create\"") == ["v1/create"]
+    assert get_parse_cli("\"api/v1/user/2\"") == ["api/v1/user/2"]
+    assert get_parse_cli("\"api/v1/search?text=Test Hello\"") == ["api/v1/search?text=Test Hello"]
+
     assert get_parse_cli("\"test_1.json\"") == ["test_1.json"]
     assert get_parse_cli("\"test2.aspx?arg1=tmp1+tmp2&arg2=tmp3\"") == ["test2.aspx?arg1=tmp1+tmp2&arg2=tmp3"]
     assert get_parse_cli("\"addUser.action\"") == ["addUser.action"]
