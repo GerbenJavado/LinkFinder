@@ -8,7 +8,7 @@ import os
 os.environ["BROWSER"] = "open"
 
 # Import libraries
-import re, sys, glob, cgi, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree
+import re, sys, glob, html, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree
 
 from gzip import GzipFile
 from string import Template
@@ -231,7 +231,7 @@ def cli_output(endpoints):
     Output to CLI
     '''
     for endpoint in endpoints:
-        print(cgi.escape(endpoint["link"]).encode(
+        print(html.escape(endpoint["link"]).encode(
             'ascii', 'ignore').decode('utf8'))
 
 def html_save(html):
@@ -315,7 +315,7 @@ if __name__ == "__main__":
     urls = parser_input(args.input)
 
     # Convert URLs to JS
-    html = ''
+    output = ''
     for url in urls:
         if not args.burp:
             try:
@@ -329,7 +329,7 @@ if __name__ == "__main__":
         endpoints = parser_file(file, regex_str, mode, args.regex)
         if args.domain:
             for endpoint in endpoints:
-                endpoint = cgi.escape(endpoint["link"]).encode('ascii', 'ignore').decode('utf8')
+                endpoint = html.escape(endpoint["link"]).encode('ascii', 'ignore').decode('utf8')
                 endpoint = check_url(endpoint)
                 if endpoint is False:
                     continue
@@ -341,25 +341,25 @@ if __name__ == "__main__":
                     if args.output == 'cli':
                         cli_output(new_endpoints)
                     else:
-                        html += '''
+                        output += '''
                         <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
-                        ''' % (cgi.escape(endpoint), cgi.escape(endpoint))
+                        ''' % (html.escape(endpoint), html.escape(endpoint))
 
                         for endpoint2 in new_endpoints:
-                            url = cgi.escape(endpoint2["link"])
-                            string = "<div><a href='%s' class='text'>%s" % (
-                                cgi.escape(url),
-                                cgi.escape(url)
+                            url = html.escape(endpoint2["link"])
+                            header = "<div><a href='%s' class='text'>%s" % (
+                                html.escape(url),
+                                html.escape(url)
                             )
-                            string2 = "</a><div class='container'>%s</div></div>" % cgi.escape(
+                            body = "</a><div class='container'>%s</div></div>" % html.escape(
                                 endpoint2["context"]
                             )
-                            string2 = string2.replace(
-                                cgi.escape(endpoint2["link"]),
+                            body = body.replace(
+                                html.escape(endpoint2["link"]),
                                 "<span style='background-color:yellow'>%s</span>" %
-                                cgi.escape(endpoint2["link"])
+                                html.escape(endpoint2["link"])
                             )
-                            html += string + string2
+                            output += header + body
                 except Exception as e:
                     print("Invalid input defined or SSL error for: " + endpoint)
                     continue
@@ -367,26 +367,26 @@ if __name__ == "__main__":
         if args.output == 'cli':
             cli_output(endpoints)
         else:
-            html += '''
+            output += '''
                 <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
-                ''' % (cgi.escape(url), cgi.escape(url))
+                ''' % (html.escape(url), html.escape(url))
 
             for endpoint in endpoints:
-                url = cgi.escape(endpoint["link"])
-                string = "<div><a href='%s' class='text'>%s" % (
-                    cgi.escape(url),
-                    cgi.escape(url)
+                url = html.escape(endpoint["link"])
+                header = "<div><a href='%s' class='text'>%s" % (
+                    html.escape(url),
+                    html.escape(url)
                 )
-                string2 = "</a><div class='container'>%s</div></div>" % cgi.escape(
+                body = "</a><div class='container'>%s</div></div>" % html.escape(
                     endpoint["context"]
                 )
-                string2 = string2.replace(
-                    cgi.escape(endpoint["link"]),
+                body = body.replace(
+                    html.escape(endpoint["link"]),
                     "<span style='background-color:yellow'>%s</span>" %
-                    cgi.escape(endpoint["link"])
+                    html.escape(endpoint["link"])
                 )
 
-                html += string + string2
+                output += header + body
 
     if args.output != 'cli':
-        html_save(html)
+        html_save(output)
