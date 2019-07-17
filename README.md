@@ -11,7 +11,6 @@ The output is given in HTML. [Karel_origin](https://twitter.com/karel_origin) ha
 
 ![LinkFinder](https://i.imgur.com/JfcpYok.png "LinkFinder in action")
 
-
 ## Installation
 
 LinkFinder supports **Python 2 & 3**.
@@ -24,7 +23,11 @@ $ python setup.py install
 
 ## Dependencies
 
-LinkFinder depends on the `argparse` and `jsbeautifier` python modules. These dependencies can all be installed using [pip](https://pypi.python.org/pypi/pip). 
+LinkFinder depends on the `argparse` and `jsbeautifier` python modules. These dependencies can all be installed using [pip](https://pypi.python.org/pypi/pip).
+
+```
+$ pip3 install -r requirements.txt
+```
 
 ## Usage
 
@@ -42,7 +45,7 @@ Short Form    | Long Form     | Description
 
 * Most basic usage to find endpoints in an online JavaScript file and output the results to results.html:
 
-``python linkfinder.py -i https://example.com/1.js -o results.html``
+`python linkfinder.py -i https://example.com/1.js -o results.html`
 
 * CLI ouput (doesn't use jsbeautifier, which makes it very fast):
 
@@ -58,13 +61,13 @@ Short Form    | Long Form     | Description
 
 * Enumerating an entire folder for JavaScript files, while looking for endpoints starting with /api/ and finally saving the results to results.html:
 
-``python linkfinder.py -i 'Desktop/*.js' -r ^/api/ -o results.html``
+`python linkfinder.py -i 'Desktop/*.js' -r ^/api/ -o results.html`
 
 ## Unit-test
 
 * Require pytest
 
-``pytest test_parser.py``
+`pytest test_parser.py`
 
 ## Final remarks
 - This is the first time I publicly release a tool. Contributions are much appreciated!
