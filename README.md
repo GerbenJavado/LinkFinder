@@ -5,7 +5,7 @@ LinkFinder is a python script written to discover endpoints and their parameters
 - Relative URLs with atleast one slash (text/test.php) 
 - Relative URLs without a slash (test.php)
 
-The output is given in HTML. [Karel_origin](https://twitter.com/karel_origin) has written a chrome extension for LinkFinder which can be found [here](https://github.com/GerbenJavado/LinkFinder/tree/chrome_extension).
+The output is given in HTML or plaintext. [Karel_origin](https://twitter.com/karel_origin) has written a chrome extension for LinkFinder which can be found [here](https://github.com/GerbenJavado/LinkFinder/tree/chrome_extension).
 
 ## Screenshots
 
@@ -34,7 +34,7 @@ $ pip3 install -r requirements.txt
 Short Form    | Long Form     | Description
 ------------- | ------------- |-------------
 -i            | --input       | Input a: URL, file or folder. For folders a wildcard can be used (e.g. '/*.js').
--o            | --output      | Where to save the file, including file name or output to CLI. Default: output.html
+-o            | --output      | "cli" to print to STDOUT, otherwise where to save the HTML file Default: output.html
 -r            | --regex       | RegEx for filtering purposes against found endpoints (e.g. ^/api/)
 -d            | --domain      | Toggle to use when analyzing an entire domain. Enumerates over all found JS files.
 -b            | --burp        | Toggle to use when inputting a Burp 'Save selected' file containing multiple JS files
@@ -43,11 +43,11 @@ Short Form    | Long Form     | Description
 
 ### Examples
 
-* Most basic usage to find endpoints in an online JavaScript file and output the results to results.html:
+* Most basic usage to find endpoints in an online JavaScript file and output the HTML results to results.html:
 
 `python linkfinder.py -i https://example.com/1.js -o results.html`
 
-* CLI ouput (doesn't use jsbeautifier, which makes it very fast):
+* CLI/STDOUT output (doesn't use jsbeautifier, which makes it very fast):
 
 `python linkfinder.py -i https://example.com/1.js -o cli`
 
