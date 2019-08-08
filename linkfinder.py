@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Python 2.7.x - 3.6.x
+# Python 3
 # LinkFinder
 # By Gerben_Javado
 
