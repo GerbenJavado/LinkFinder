@@ -1,3 +1,5 @@
+<img src="https://user-images.githubusercontent.com/18099289/62728809-f98b0900-ba1c-11e9-8dd8-67111263a21f.png" width=650px>
+
 ## About LinkFinder
 
 LinkFinder is a python script written to discover endpoints and their parameters in JavaScript files. This way penetration testers and bug hunters are able to gather new, hidden endpoints on the websites they are testing. Resulting in new testing ground, possibility containing new vulnerabilities. It does so by using [jsbeautifier](https://github.com/beautify-web/js-beautify) for python in combination with a fairly large regular expression. The regular expressions consists of four small regular expressions. These are responsible for finding:
@@ -7,7 +9,7 @@ LinkFinder is a python script written to discover endpoints and their parameters
 - Relative URLs with at least one slash (`text/test.php`)
 - Relative URLs without a slash (`test.php`)
 
-The output is given in HTML or plaintext. [Karel_origin](https://twitter.com/karel_origin) has written a Chrome extension for LinkFinder which can be found [here](https://github.com/GerbenJavado/LinkFinder/tree/chrome_extension).
+The output is given in HTML or plaintext. [@karel_origin](https://twitter.com/karel_origin) has written a Chrome extension for LinkFinder which can be found [here](https://github.com/GerbenJavado/LinkFinder/tree/chrome_extension).
 
 ## Screenshots
 
