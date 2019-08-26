@@ -67,6 +67,18 @@ Short Form    | Long Form     | Description
 
 `python linkfinder.py -i 'Desktop/*.js' -r ^/api/ -o results.html`
 
+## Docker
+
+* Build the Docker image:
+
+  ``` docker build -t linkfinder```
+
+* Run with Docker
+
+  ` docker run --rm -v $(pwd):/linkfinder/output linkfinder -i http://example.com/1.js -o /linkfinder/output/output.html`
+
+  Make sure to use the path `/linkfinder/output` in your output path, or the output will be lost when the container exits.
+
 ## Unit-test
 
 * Require pytest
