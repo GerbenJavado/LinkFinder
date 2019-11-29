@@ -46,14 +46,20 @@ regex_str = r"""
     ([a-zA-Z0-9_\-/]{1,}/               # Relative endpoint with /
     [a-zA-Z0-9_\-/]{1,}                 # Resource name
     \.(?:[a-zA-Z]{1,4}|action)          # Rest + extension (length 1-4 or action)
-    (?:[\?|/][^"|']{0,}|))              # ? mark with parameters
+    (?:[\?|#][^"|']{0,}|))              # ? or # mark with parameters
+
+    |
+
+    ([a-zA-Z0-9_\-/]{1,}/               # REST API (no extension) with /
+    [a-zA-Z0-9_\-/]{3,}                 # Proper REST endpoints usually have 3+ chars
+    (?:[\?|#][^"|']{0,}|))              # ? or # mark with parameters
 
     |
 
     ([a-zA-Z0-9_\-]{1,}                 # filename
     \.(?:php|asp|aspx|jsp|json|
-         action|html|js|txt|xml)             # . + extension
-    (?:\?[^"|']{0,}|))                  # ? mark with parameters
+         action|html|js|txt|xml)        # . + extension
+    (?:[\?|#][^"|']{0,}|))              # ? or # mark with parameters
 
   )
 
@@ -114,7 +120,7 @@ def send_request(url):
     Send requests with Requests
     '''
     q = Request(url)
-    
+
     q.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
         AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36')
     q.add_header('Accept', 'text/html,\
@@ -122,7 +128,7 @@ def send_request(url):
     q.add_header('Accept-Language', 'en-US,en;q=0.8')
     q.add_header('Accept-Encoding', 'gzip')
     q.add_header('Cookie', args.cookies)
-    
+
     try:
         sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
         response = urlopen(q, context=sslcontext)
