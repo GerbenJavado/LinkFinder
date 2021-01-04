@@ -9,5 +9,5 @@ setup(
     long_description=open('README.md').read(),
     author='Gerben Javado',
     url='https://github.com/GerbenJavado/LinkFinder',
-    install_requires=['argparse', 'jsbeautifier'],
+    install_requires=['jsbeautifier'],
 )
