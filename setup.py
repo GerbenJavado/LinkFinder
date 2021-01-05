@@ -10,5 +10,5 @@ setup(
     author='Gerben Javado',
     url='https://github.com/GerbenJavado/LinkFinder',
     py_modules=['linkfinder'],
-    install_requires=['argparse', 'jsbeautifier'],
+    install_requires=['jsbeautifier'],
 )

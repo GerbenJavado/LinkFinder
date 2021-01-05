@@ -131,10 +131,10 @@ def send_request(url):
 
     try:
         sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-        response = urlopen(q, context=sslcontext)
+        response = urlopen(q, timeout=args.timeout, context=sslcontext)
     except:
         sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-        response = urlopen(q, context=sslcontext)
+        response = urlopen(q, timeout=args.timeout, context=sslcontext)
 
     if response.info().get('Content-Encoding') == 'gzip':
         data = GzipFile(fileobj=readBytesCustom(response.read())).read()
@@ -308,6 +308,10 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--cookies",
                         help="Add cookies for authenticated JS files",
                         action="store", default="")
+    default_timeout = 10
+    parser.add_argument("-t", "--timeout",
+                        help="How many seconds to wait for the server to send data before giving up (default: " + str(default_timeout) + " seconds)",
+                        default=default_timeout, type=int, metavar="<seconds>")
     args = parser.parse_args()
 
     if args.input[-1:] == "/":
