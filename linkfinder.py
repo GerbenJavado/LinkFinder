@@ -28,7 +28,7 @@ except ImportError:
 # Regex used
 regex_str = r"""
 
-  (?:"|')                               # Start newline delimiter
+  (?:"|'|=)                               # Start newline delimiter
 
   (
     ((?:[a-zA-Z]{1,10}://|//)           # Match a scheme [a-Z]*1-10 or //
@@ -38,8 +38,8 @@ regex_str = r"""
     |
 
     ((?:/|\.\./|\./)                    # Start with /,../,./
-    [^"'><,;| *()(%%$^/\\\[\]]          # Next character can't be...
-    [^"'><,;|()]{1,})                   # Rest of the characters can't be
+    [^"'><,;|\ *()(%%$^/\\\[\]]          # Next character can't be...
+    [^"'><,;|\ ()]{1,})                  # Rest of the characters can't be
 
     |
 
@@ -63,7 +63,7 @@ regex_str = r"""
 
   )
 
-  (?:"|')                               # End newline delimiter
+  (?:"|'|\ )                               # End newline delimiter
 
 """
 
@@ -130,11 +130,11 @@ def send_request(url):
     q.add_header('Cookie', args.cookies)
 
     try:
-        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-        response = urlopen(q, timeout=args.timeout, context=sslcontext)
-    except:
+        response = urlopen(q, timeout=args.timeout, context=ssl._create_unverified_context())
+    except Exception as e:
+        print(e)
         sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-        response = urlopen(q, timeout=args.timeout, context=sslcontext)
+        response = urlopen(q, timeout=args.timeout, context=ssl._create_unverified_context())
 
     if response.info().get('Content-Encoding') == 'gzip':
         data = GzipFile(fileobj=readBytesCustom(response.read())).read()
