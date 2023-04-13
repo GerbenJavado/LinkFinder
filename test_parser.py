@@ -51,6 +51,9 @@ def test_parser_cli():
     assert get_parse_cli("\"users.xml\"") == ["users.xml"]
     assert get_parse_cli("\"UserModel.name\"") == []
 
+    assert get_parse_cli("\"app/admin/admin.controller.js\"") == ["app/admin/admin.controller.js"]
+    assert get_parse_cli("\"services/customer.services.js\"") == ["services/customer.services.js"]
+
 def test_parser_cli_multi():
     assert set(get_parse_cli("href=\"http://example.com\";href=\"/api/create.php\"")) == set(["http://example.com", "/api/create.php"])
 

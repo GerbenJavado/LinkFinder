@@ -44,7 +44,7 @@ regex_str = r"""
     |
 
     ([a-zA-Z0-9_\-/]{1,}/               # Relative endpoint with /
-    [a-zA-Z0-9_\-/]{1,}                 # Resource name
+    [a-zA-Z0-9_\-/.]{1,}                # Resource name
     \.(?:[a-zA-Z]{1,4}|action)          # Rest + extension (length 1-4 or action)
     (?:[\?|#][^"|']{0,}|))              # ? or # mark with parameters
 
