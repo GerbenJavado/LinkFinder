@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Python 3
 # LinkFinder
 # By Gerben_Javado
@@ -9,6 +9,9 @@ os.environ["BROWSER"] = "open"
 
 # Import libraries
 import re, sys, glob, html, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree
+import requests
+import urllib3
+urllib3.disable_warnings()
 
 from gzip import GzipFile
 from string import Template
@@ -119,31 +122,14 @@ def send_request(url):
     '''
     Send requests with Requests
     '''
-    q = Request(url)
 
-    q.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36')
-    q.add_header('Accept', 'text/html,\
-        application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8')
-    q.add_header('Accept-Language', 'en-US,en;q=0.8')
-    q.add_header('Accept-Encoding', 'gzip')
-    q.add_header('Cookie', args.cookies)
+    headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+            'Cookie': args.cookies
+    }
 
-    try:
-        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-        response = urlopen(q, timeout=args.timeout, context=sslcontext)
-    except:
-        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-        response = urlopen(q, timeout=args.timeout, context=sslcontext)
-
-    if response.info().get('Content-Encoding') == 'gzip':
-        data = GzipFile(fileobj=readBytesCustom(response.read())).read()
-    elif response.info().get('Content-Encoding') == 'deflate':
-        data = response.read().read()
-    else:
-        data = response.read()
-
-    return data.decode('utf-8', 'replace')
+    res = requests.get(url, headers=headers, timeout=args.timeout, verify=False)
+    return res.text
 
 def getContext(list_matches, content, include_delimiter=0, context_delimiter_str="\n"):
     '''
