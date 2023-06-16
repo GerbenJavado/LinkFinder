@@ -10,6 +10,7 @@ os.environ["BROWSER"] = "open"
 # Import libraries
 import re, sys, glob, html, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree
 
+from colorama import Fore
 from gzip import GzipFile
 from string import Template
 
@@ -232,13 +233,20 @@ def parser_file(content, regex_str, mode=1, more_regex=None, no_dup=1):
 
     return filtered_items
 
+def save_text(endpoints):
+    '''
+    Save output to a txt file called output.txt
+    '''
+    with open("output.txt", "w") as f:
+        for endpoint in endpoints:
+            f.writelines(f"{Fore.GREEN}{html.escape(endpoint['link']).encode('ascii', 'ignore').decode('utf8')}\n")
+
 def cli_output(endpoints):
     '''
     Output to CLI
     '''
     for endpoint in endpoints:
-        print(html.escape(endpoint["link"]).encode(
-            'ascii', 'ignore').decode('utf8'))
+        print(f"{Fore.GREEN}{html.escape(endpoint['link']).encode('ascii', 'ignore').decode('utf8')}")
 
 def html_save(html):
     '''
@@ -324,7 +332,7 @@ if __name__ == "__main__":
     # Convert input to URLs or JS files
     urls = parser_input(args.input)
 
-    # Convert URLs to JS
+    # Convert URLs to JkS
     output = ''
     for url in urls:
         if not args.burp:
@@ -349,7 +357,9 @@ if __name__ == "__main__":
                     file = send_request(endpoint)
                     new_endpoints = parser_file(file, regex_str, mode, args.regex)
                     if args.output == 'cli':
-                        cli_output(new_endpoints)
+                        cli_output(new_endpoint)
+                    if args.output == "txt":
+                        save_text(new_endpoint)
                     else:
                         output += '''
                         <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
@@ -376,6 +386,8 @@ if __name__ == "__main__":
 
         if args.output == 'cli':
             cli_output(endpoints)
+        if args.output == 'txt':
+            save_text(endpoints)
         else:
             output += '''
                 <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
