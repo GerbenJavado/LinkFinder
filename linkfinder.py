@@ -358,8 +358,6 @@ if __name__ == "__main__":
                     new_endpoints = parser_file(file, regex_str, mode, args.regex)
                     if args.output == 'cli':
                         cli_output(new_endpoint)
-                    if args.output == "txt":
-                        save_text(new_endpoint)
                     else:
                         output += '''
                         <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
@@ -383,11 +381,10 @@ if __name__ == "__main__":
                 except Exception as e:
                     print("Invalid input defined or SSL error for: " + endpoint)
                     continue
-
+        if args.output == 'text':
+            save_text(endpoints)
         if args.output == 'cli':
             cli_output(endpoints)
-        if args.output == 'txt':
-            save_text(endpoints)
         else:
             output += '''
                 <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
