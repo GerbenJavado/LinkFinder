@@ -1,4 +1,4 @@
-<img src="https://github.com/mrrobot1o1/LinkFinder/assets/66872759/1de1d931-eeb6-45c6-9e2b-77802d9faafd" width=650px>
+<img src="https://github.com/mrrobot1o1/LinkFinder/assets/66872759/bc6660ed-a84e-4e04-82ed-f9ffe6b7d17e" width=650px>
 
 ## About LinkFinder
 
