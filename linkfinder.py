@@ -8,7 +8,17 @@ import os
 os.environ["BROWSER"] = "open"
 
 # Import libraries
-import re, sys, glob, html, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree
+import re
+import sys
+import glob
+import html
+import argparse
+import jsbeautifier
+import webbrowser
+import subprocess
+import base64
+import ssl
+import xml.etree.ElementTree
 
 from gzip import GzipFile
 from string import Template
@@ -24,6 +34,12 @@ try:
     from urllib.request import Request, urlopen
 except ImportError:
     from urllib2 import Request, urlopen
+
+def combine_results(results):
+    combined_output = ''
+    for result in results:
+        combined_output += result
+    return combined_output
 
 # Regex used
 regex_str = r"""
@@ -77,7 +93,6 @@ def parser_error(errmsg):
     print("Error: %s" % errmsg)
     sys.exit()
 
-
 def parser_input(input):
     '''
     Parse Input
@@ -98,7 +113,8 @@ def parser_input(input):
         items = xml.etree.ElementTree.fromstring(open(args.input, "r").read())
 
         for item in items:
-            jsfiles.append({"js":base64.b64decode(item.find('response').text).decode('utf-8',"replace"), "url":item.find('url').text})
+            jsfiles.append({"js": base64.b64decode(item.find('response').text).decode('utf-8', "replace"),
+                            "url": item.find('url').text})
         return jsfiles
 
     # Method 4 - Folder with a wildcard
@@ -113,7 +129,6 @@ def parser_input(input):
     path = "file://%s" % os.path.abspath(input)
     return [path if os.path.exists(input) else parser_error("file could not \
 be found (maybe you forgot to add http/https).")]
-
 
 def send_request(url):
     '''
@@ -130,10 +145,16 @@ def send_request(url):
     q.add_header('Cookie', args.cookies)
 
     try:
-        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-        response = urlopen(q, timeout=args.timeout, context=sslcontext)
+        if args.insecure:
+            sslcontext = ssl.create_default_context()
+            sslcontext.check_hostname = False 
+            sslcontext.verify_mode = ssl.CERT_NONE
+            response = urlopen(q, timeout=args.timeout, context=sslcontext)
+        else:
+            sslcontext = ssl.create_default_context()
+            response = urlopen(q, timeout=args.timeout, context=sslcontext)
     except:
-        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+        sslcontext = ssl.create_default_context()
         response = urlopen(q, timeout=args.timeout, context=sslcontext)
 
     if response.info().get('Content-Encoding') == 'gzip':
@@ -198,7 +219,7 @@ def parser_file(content, regex_str, mode=1, more_regex=None, no_dup=1):
     if mode == 1:
         # Beautify
         if len(content) > 1000000:
-            content = content.replace(";",";\r\n").replace(",",",\r\n")
+            content = content.replace(";", ";\r\n").replace(",", ",\r\n")
         else:
             content = jsbeautifier.beautify(content)
 
@@ -288,12 +309,12 @@ if __name__ == "__main__":
     # Parse command line
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--domain",
-                        help="Input a domain to recursively parse all javascript located in a page",
+                        help="Input a domain to recursively parse all JavaScript located on a page",
                         action="store_true")
     parser.add_argument("-i", "--input",
                         help="Input a: URL, file or folder. \
                         For folders a wildcard can be used (e.g. '/*.js').",
-                        required="True", action="store")
+                        required=True, action="store")
     parser.add_argument("-o", "--output",
                         help="Where to save the file, \
                         including file name. Default: output.html",
@@ -312,6 +333,9 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--timeout",
                         help="How many seconds to wait for the server to send data before giving up (default: " + str(default_timeout) + " seconds)",
                         default=default_timeout, type=int, metavar="<seconds>")
+    parser.add_argument("--insecure",
+                    help="Allow insecure SSL connections (disable certificate verification)",
+                    action="store_true")
     args = parser.parse_args()
 
     if args.input[-1:] == "/":
@@ -321,22 +345,28 @@ if __name__ == "__main__":
     if args.output == "cli":
         mode = 0
 
-    # Convert input to URLs or JS files
-    urls = parser_input(args.input)
+    # Check if input is a URL or a file
+    if os.path.isfile(args.input):
+        # Read URLs from the file
+        with open(args.input, 'r') as file:
+            urls = file.read().splitlines()
+    else:
+        # Single URL provided
+        urls = [args.input]
 
     # Convert URLs to JS
-    output = ''
+    results = []
     for url in urls:
         if not args.burp:
             try:
-                file = send_request(url)
+                file_content = send_request(url)
             except Exception as e:
                 parser_error("invalid input defined or SSL error: %s" % e)
         else:
-            file = url['js']
+            file_content = url['js']
             url = url['url']
 
-        endpoints = parser_file(file, regex_str, mode, args.regex)
+        endpoints = parser_file(file_content, regex_str, mode, args.regex)
         if args.domain:
             for endpoint in endpoints:
                 endpoint = html.escape(endpoint["link"]).encode('ascii', 'ignore').decode('utf8')
@@ -346,14 +376,14 @@ if __name__ == "__main__":
                 print("Running against: " + endpoint)
                 print("")
                 try:
-                    file = send_request(endpoint)
-                    new_endpoints = parser_file(file, regex_str, mode, args.regex)
+                    file_content = send_request(endpoint)
+                    new_endpoints = parser_file(file_content, regex_str, mode, args.regex)
                     if args.output == 'cli':
                         cli_output(new_endpoints)
                     else:
-                        output += '''
-                        <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
-                        ''' % (html.escape(endpoint), html.escape(endpoint))
+                        output = '''
+                            <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
+                            ''' % (html.escape(endpoint), html.escape(endpoint))
 
                         for endpoint2 in new_endpoints:
                             url = html.escape(endpoint2["link"])
@@ -370,6 +400,7 @@ if __name__ == "__main__":
                                 html.escape(endpoint2["link"])
                             )
                             output += header + body
+                        results.append(output)
                 except Exception as e:
                     print("Invalid input defined or SSL error for: " + endpoint)
                     continue
@@ -377,8 +408,8 @@ if __name__ == "__main__":
         if args.output == 'cli':
             cli_output(endpoints)
         else:
-            output += '''
-                <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
+            output = '''
+                <h1>URL: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
                 ''' % (html.escape(url), html.escape(url))
 
             for endpoint in endpoints:
@@ -397,6 +428,9 @@ if __name__ == "__main__":
                 )
 
                 output += header + body
+            results.append(output)
 
     if args.output != 'cli':
-        html_save(output)
+        html_save(combine_results(results))
+
+
