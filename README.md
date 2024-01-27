@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/18099289/62728809-f98b0900-ba1c-11e9-8dd8-67111263a21f.png" width=650px>
+<img src="https://github.com/mrrobot1o1/LinkFinder/assets/66872759/1de1d931-eeb6-45c6-9e2b-77802d9faafd" width=650px>
 
 ## About LinkFinder
 
@@ -50,6 +50,10 @@ Short Form    | Long Form     | Description
 * Most basic usage to find endpoints in an online JavaScript file and output the HTML results to results.html:
 
 `python linkfinder.py -i https://example.com/1.js -o results.html`
+
+OR
+
+`python linkfinder.py -i js_urls.txt -o results.html`
 
 * CLI/STDOUT output (doesn't use jsbeautifier, which makes it very fast):
 
