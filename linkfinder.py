@@ -145,10 +145,16 @@ def send_request(url):
     q.add_header('Cookie', args.cookies)
 
     try:
-        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-        response = urlopen(q, timeout=args.timeout, context=sslcontext)
+        if args.insecure:
+            sslcontext = ssl.create_default_context()
+            sslcontext.check_hostname = False 
+            sslcontext.verify_mode = ssl.CERT_NONE
+            response = urlopen(q, timeout=args.timeout, context=sslcontext)
+        else:
+            sslcontext = ssl.create_default_context()
+            response = urlopen(q, timeout=args.timeout, context=sslcontext)
     except:
-        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+        sslcontext = ssl.create_default_context()
         response = urlopen(q, timeout=args.timeout, context=sslcontext)
 
     if response.info().get('Content-Encoding') == 'gzip':
@@ -327,6 +333,9 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--timeout",
                         help="How many seconds to wait for the server to send data before giving up (default: " + str(default_timeout) + " seconds)",
                         default=default_timeout, type=int, metavar="<seconds>")
+    parser.add_argument("--insecure",
+                    help="Allow insecure SSL connections (disable certificate verification)",
+                    action="store_true")
     args = parser.parse_args()
 
     if args.input[-1:] == "/":
