@@ -257,10 +257,11 @@ def html_save(html):
 
         print("URL to access output: file://%s" % os.path.abspath(args.output))
         file = "file:///%s" % os.path.abspath(args.output)
-        if sys.platform == 'linux' or sys.platform == 'linux2':
-            subprocess.call(["xdg-open", file])
-        else:
-            webbrowser.open(file)
+        if not args.no_browser:
+            if sys.platform == 'linux' or sys.platform == 'linux2':
+                subprocess.call(["xdg-open", file])
+            else:
+                webbrowser.open(file)
     except Exception as e:
         print("Output can't be saved in %s \
             due to exception: %s" % (args.output, e))
@@ -313,6 +314,9 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--timeout",
                         help="How many seconds to wait for the server to send data before giving up (default: " + str(default_timeout) + " seconds)",
                         default=default_timeout, type=int, metavar="<seconds>")
+    parser.add_argument("-nB", "--no_browser",
+                        help="Do not auto-open browser to render HTML output.",
+                        action="store_true")
     args = parser.parse_args()
 
     if args.input[-1:] == "/":
